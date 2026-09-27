@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WedPlan &middot; Dimitris &amp; Marilena &middot; 30 April 2028</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.31.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Outfit:wght@300;400;500;600&display=swap");
+:root{
+  /* Palette derived from the Save-the-Date invitation: warm ivory, sage/olive botanicals,
+     taupe/gold typography, dusty blush accents. Variable NAMES kept close to the source
+     planner so structure/behaviour is easy to verify, but every value below is new. */
+  --ink:#3d3826;--ink-s:#726b56;--ink-f:#a89f87;
+  --paper:#f5efdd;--paper2:#fffcf4;
+  --line:#e3d8bc;--line-s:#ece4d2;
+  --olive:#748159;--olive-d:#4f5a3d;
+  --terra:#c9998c;--gold:#a6875f;--sky:#8b9884;
+  --overdue:#a85d4f;--overdue-bg:#f2ddd6;
+  --green-bg:#e7ead9;--green-tx:#4f5a3d;
+  --amber-bg:#f2e6cd;--amber-tx:#8a6a35;
+  --red-bg:#f2ddd6;--red-tx:#8a4f42;
+  --blue-bg:#e6e9dc;--blue-tx:#5c6650;
+  --r:14px;--rs:9px;
+  --sh:0 1px 3px rgba(70,55,30,.05),0 6px 24px rgba(70,55,30,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Outfit",sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;background-image:radial-gradient(circle at 10% 6%,rgba(201,153,140,.07),transparent 38%),radial-gradient(circle at 90% 94%,rgba(116,129,89,.08),transparent 42%);min-height:100vh}
+.shell{max-width:1100px;margin:0 auto;padding:0 20px 80px}
+header.hero{padding:52px 0 28px;text-align:center;position:relative}
+.eyebrow{font-size:11.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--terra);font-weight:500;margin-bottom:14px}
+h1.title{font-family:"Fraunces";font-weight:300;font-size:clamp(36px,6vw,62px);line-height:1;color:var(--ink);letter-spacing:-.02em}
+h1.title em{font-style:italic;color:var(--gold)}
+.date-line{font-family:"Fraunces";font-style:italic;font-size:18px;color:var(--ink-s);margin-top:14px}
+.meta-line{margin-top:8px;font-size:13px;color:var(--ink-f)}
+.rule{width:48px;height:1px;background:var(--gold);margin:20px auto 0;opacity:.55}
+nav.tabs{position:sticky;top:0;z-index:40;display:flex;gap:4px;justify-content:center;flex-wrap:wrap;padding:13px 0;background:linear-gradient(to bottom,var(--paper) 70%,transparent)}
+nav.tabs button{font-family:"Outfit";font-size:13px;font-weight:500;padding:9px 17px;border:1px solid transparent;border-radius:28px;background:transparent;color:var(--ink-s);cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+nav.tabs button:hover{color:var(--ink);background:var(--paper2)}
+nav.tabs button.active{background:var(--ink);color:var(--paper)}
+section.panel{display:none;animation:rise .35s ease both}
+section.panel.show{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+h2.sec{font-family:"Fraunces";font-weight:500;font-size:28px;letter-spacing:-.01em;margin:8px 0 4px}
+h3.subsec{font-family:"Fraunces";font-weight:500;font-size:20px;letter-spacing:-.01em;margin:34px 0 4px}
+p.sec-sub{color:var(--ink-s);font-size:14px;margin-bottom:22px;max-width:65ch}
+.card{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:20px 22px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px}
+.blk-title{font-family:"Fraunces";font-size:17px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.blk-title .ti{color:var(--gold)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:13px;margin-bottom:22px}
+.stat{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);padding:17px 19px;position:relative;overflow:hidden;box-shadow:var(--sh)}
+.stat::after{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--acc,var(--olive))}
+.sl{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-f);font-weight:500}
+.sv{font-family:"Fraunces";font-size:30px;font-weight:500;color:var(--ink);margin-top:4px;line-height:1}
+.ss{font-size:12px;color:var(--ink-s);margin-top:4px}
+.chip{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+.chip.crit{background:var(--red-bg);color:var(--red-tx)}
+.chip.high{background:var(--amber-bg);color:var(--amber-tx)}
+.chip.med{background:var(--blue-bg);color:var(--blue-tx)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{font-family:"Outfit";font-size:12px;font-weight:500;padding:6px 13px;border:1px solid var(--line);border-radius:22px;background:var(--paper2);color:var(--ink-s);cursor:pointer;transition:all .16s}
+.filters button:hover{border-color:var(--olive)}
+.filters button.on{background:var(--olive);color:#fff;border-color:var(--olive)}
+select.sel{font-family:"Outfit";font-size:12.5px;padding:7px 13px;border:1px solid var(--line);border-radius:var(--rs);background:var(--paper2);color:var(--ink);cursor:pointer}
+.vd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
+.vd-card{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.vd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px}
+.vdh{font-family:"Fraunces";font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.vdh .ti{color:var(--gold)}
+.vd-bud{font-family:"Fraunces";font-size:21px;color:var(--olive);font-weight:500;margin-bottom:11px}
+.vd-detail{font-size:12.5px;color:var(--ink-s);margin-bottom:4px;display:flex;gap:6px}
+.vd-lbl{color:var(--ink-f);min-width:78px;font-size:11.5px;flex-shrink:0}
+.vd-tip{font-size:12px;color:var(--amber-tx);background:var(--amber-bg);border-radius:var(--rs);padding:7px 10px;margin-top:10px;display:flex;gap:7px;align-items:flex-start}
+.vnote{font-size:12.5px;color:var(--amber-tx);background:var(--amber-bg);border-radius:var(--rs);padding:8px 12px;margin-top:11px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.vnote .ti{flex-shrink:0;margin-top:1px}
+.chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:22px}
+.editbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.btn{font-family:"Outfit";font-size:13px;font-weight:500;padding:9px 15px;border-radius:var(--rs);border:1px solid transparent;cursor:pointer;transition:all .16s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--olive);color:#fff}
+.btn-primary:hover{background:var(--olive-d)}
+.btn-ghost{background:var(--paper2);color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--ink-s)}
+.tbl-wrap{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:600px}
+thead th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-f);padding:12px 13px;background:var(--paper);border-bottom:1px solid var(--line);white-space:nowrap;cursor:default}
+thead th.sortable{cursor:pointer;user-select:none}
+thead th.sortable:hover{color:var(--olive)}
+tbody td{padding:11px 13px;border-bottom:1px solid var(--line-s);color:var(--ink);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--paper)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+td .acts{display:flex;gap:5px;opacity:.3;transition:opacity .15s}
+tbody tr:hover .acts{opacity:1}
+.icobtn{width:27px;height:27px;border:1px solid var(--line);border-radius:7px;background:var(--paper2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink-s);transition:all .14s;flex-shrink:0}
+.icobtn:hover{border-color:var(--olive);color:var(--olive)}
+.icobtn.del:hover{border-color:var(--terra);color:var(--overdue)}
+.pill{font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:18px;white-space:nowrap;text-transform:uppercase}
+.pill.done{background:var(--green-bg);color:var(--green-tx)}
+.pill.prog{background:var(--amber-bg);color:var(--amber-tx)}
+.pill.todo{background:var(--paper);color:var(--ink-f);border:1px solid var(--line)}
+.pill.dead{background:var(--red-bg);color:var(--red-tx)}
+.agebadge{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
+.agebadge.old{background:#efe6d4;color:#7a5f3b}
+.agebadge.middle{background:var(--green-bg);color:var(--green-tx)}
+.agebadge.young{background:var(--blue-bg);color:var(--blue-tx)}
+.agebadge.kid{background:#f3e0e6;color:#8a4a63}
+.tblnum-input{width:56px;font-family:"Outfit";font-size:12.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);text-align:center}
+.tblnum-input:focus{outline:none;border-color:var(--olive)}
+.modal-bg{position:fixed;inset:0;background:rgba(61,56,38,.52);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-bg.show{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--paper2);border-radius:var(--r);max-width:520px;width:100%;box-shadow:0 24px 60px rgba(61,56,38,.28);max-height:92vh;overflow-y:auto;animation:pop .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.94) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-h{font-family:"Fraunces";font-size:21px;font-weight:500;padding:22px 24px 4px}
+.modal-b{padding:14px 24px 20px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-s);letter-spacing:.04em;margin-bottom:5px;text-transform:uppercase}
+.fld input,.fld select,.fld textarea{width:100%;font-family:"Outfit";font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--rs);background:var(--paper);color:var(--ink);transition:border-color .14s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px rgba(116,129,89,.12)}
+.fld textarea{resize:vertical;min-height:56px}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check-fld label{display:flex;align-items:center;gap:8px;font-size:13px;text-transform:none;font-weight:400;color:var(--ink);cursor:pointer}
+.check-fld input[type=checkbox]{width:16px;height:16px;accent-color:var(--olive)}
+.modal-f{display:flex;justify-content:flex-end;gap:9px;padding:0 24px 22px;flex-wrap:wrap}
+.banner{background:var(--amber-bg);border:1px solid #ddc38c;border-radius:var(--rs);padding:11px 15px;font-size:12.5px;color:var(--amber-tx);margin-bottom:18px;display:flex;gap:9px;align-items:flex-start;line-height:1.55}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);font-size:13px;padding:10px 20px;border-radius:28px;box-shadow:var(--sh);z-index:200;transition:transform .28s cubic-bezier(.2,.8,.3,1);font-weight:500;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+footer{text-align:center;padding:28px 0 0;font-size:12px;color:var(--ink-f);font-family:"Fraunces";font-style:italic}
+@media(max-width:760px){.two-col{grid-template-columns:1fr}}
+@media(max-width:640px){.vd-grid,.chart-row{grid-template-columns:1fr}.filters button{font-size:11px;padding:5px 10px}}
+
+/* VENDOR PROFESSIONAL SUB-LAYER */
+.prof-section{margin-top:16px;padding-top:14px;border-top:1.5px solid var(--line-s)}
+.prof-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.prof-title{font-size:12.5px;font-weight:600;color:var(--ink-s);display:flex;align-items:center;gap:7px}
+.prof-title .ti{color:var(--gold)}
+.prof-count{font-weight:400;color:var(--ink-f)}
+.btn-add-prof{font-family:"Outfit";font-size:11.5px;font-weight:500;padding:5px 11px;border:1px solid var(--line);border-radius:22px;background:var(--paper2);color:var(--ink-s);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-add-prof:hover{border-color:var(--olive);color:var(--olive)}
+.prof-list{display:flex;flex-direction:column;gap:8px}
+.prof-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;background:var(--paper);border:1px solid var(--line-s);border-radius:var(--rs);padding:10px 12px;transition:border-color .15s}
+.prof-row:hover{border-color:var(--line)}
+.prof-main{flex:1;min-width:0}
+.prof-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.prof-link{font-size:13px;font-weight:600;color:var(--olive-d);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.prof-link:hover{color:var(--gold);text-decoration:underline}
+.prof-link .ti{font-size:11px;opacity:.7}
+.prof-note{font-size:12px;color:var(--ink-s);line-height:1.5;font-style:italic}
+.prof-acts{display:flex;gap:5px;flex-shrink:0}
+.prof-empty{font-size:12.5px;color:var(--ink-f);font-style:italic;padding:10px 4px;text-align:center}
+
+/* UTILITY ROW / SYNC */
+.util-row{position:fixed;top:14px;right:16px;z-index:60;display:flex;gap:8px}
+.sync-badge{font-family:"Outfit",sans-serif;font-size:11.5px;font-weight:500;padding:10px 14px;border-radius:20px;background:var(--paper2);border:1px solid var(--line);color:var(--ink-f);display:inline-flex;align-items:center;gap:6px;transition:all .3s;cursor:pointer;letter-spacing:.02em;box-shadow:var(--sh);min-height:40px}
+.sync-badge .spin{display:inline-block}
+.sync-badge.is-syncing{color:var(--gold);border-color:rgba(166,135,95,.4);background:var(--amber-bg)}
+.sync-badge.is-syncing .spin{animation:spin .9s linear infinite}
+.sync-badge.is-synced{color:var(--green-tx);border-color:rgba(79,90,61,.3);background:var(--green-bg)}
+.sync-badge.is-error{color:var(--overdue);border-color:rgba(168,93,79,.3);background:var(--overdue-bg)}
+.sync-badge.is-updated{color:var(--sky);border-color:rgba(139,152,132,.3);background:var(--blue-bg)}
+.sync-badge.is-off{color:var(--ink-f);border-color:var(--line)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:640px){.util-row{top:8px;right:8px}.sync-badge{font-size:10.5px;padding:7px 10px}}
+.sync-status-line{font-size:12px;color:var(--ink-s);margin:4px 0 16px;display:flex;align-items:center;gap:6px}
+.sync-bin-display{font-family:monospace;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 9px;word-break:break-all;color:var(--ink)}
+.sync-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+
+/* ── BUDGET / ROADMAP SUMMARY ─────────────────────────── */
+.bud-header-bar{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);padding:16px 22px;margin-bottom:20px;display:flex;align-items:center;gap:28px;box-shadow:var(--sh);flex-wrap:wrap}
+.bud-ring-wrap{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.bud-ring-svg{position:relative;width:68px;height:68px;flex-shrink:0}
+.bud-ring-svg svg{transform:rotate(-90deg)}
+.bud-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Fraunces";font-size:1rem;font-weight:500;color:var(--olive)}
+.bud-ring-stats{display:grid;grid-template-columns:auto auto;gap:2px 16px}
+.bud-rs-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-f);font-weight:500}
+.bud-rs-value{font-size:13px;font-weight:600;color:var(--ink)}
+.bud-rs-value.over{color:var(--overdue)}
+.bud-rs-value.under{color:var(--olive)}
+.bud-set-btn{font-family:"Outfit";font-size:11.5px;font-weight:500;padding:6px 13px;border:1px solid var(--line);border-radius:22px;background:transparent;color:var(--ink-s);cursor:pointer;transition:all .15s}
+.bud-set-btn:hover{border-color:var(--olive);color:var(--olive)}
+.bud-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.bud-scard{background:var(--paper2);padding:15px 18px}
+.bud-sc-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-f);font-weight:500;margin-bottom:5px}
+.bud-sc-value{font-family:"Fraunces";font-size:1.4rem;font-weight:500;color:var(--ink);line-height:1}
+.bud-sc-value.gold{color:var(--gold)}
+.bud-sc-value.green{color:var(--olive)}
+.bud-sc-value.red{color:var(--overdue)}
+.bud-sc-sub{font-size:11px;color:var(--ink-f);margin-top:4px}
+.bud-progress{height:2px;background:var(--line-s);border-radius:2px;overflow:hidden;margin-top:7px}
+.bud-prog-fill{height:100%;border-radius:2px;transition:width .5s ease,background .4s;background:var(--gold)}
+.bud-prog-fill.over{background:var(--overdue)}
+
+/* ── ROADMAP PAYMENT/TASK/OPTIONAL CARDS (adapted from wedding_payments_test.html) ── */
+.rm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:16px}
+.rm-card{background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px 18px;box-shadow:var(--sh)}
+.rm-card.has-budget{border-color:rgba(166,135,95,.5)}
+.rm-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px}
+.rm-name{font-family:"Fraunces";font-weight:500;font-size:19px;margin:0;color:var(--ink)}
+.rm-cat{color:var(--ink-f);font-size:12px;margin-top:2px}
+.rm-contracted{text-align:right;font-size:12px;color:var(--ink-f);white-space:nowrap}
+.rm-contracted strong{display:block;font-size:16px;color:var(--ink);font-weight:600;font-family:"Fraunces"}
+.rm-card-acts{display:flex;gap:5px;margin:6px 0 2px}
+.rm-progress-row{margin:14px 0 4px}
+.rm-progress-track{height:5px;background:var(--line-s);border-radius:3px;overflow:hidden}
+.rm-progress-fill{height:100%;background:var(--olive);border-radius:3px;transition:width .4s ease}
+.rm-progress-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-f);margin-top:6px}
+.rm-timeline{margin-top:16px;border-top:1px solid var(--line-s);padding-top:12px}
+.rm-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-s)}
+.rm-item:last-child{border-bottom:none}
+.rm-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.rm-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;cursor:pointer}
+.rm-dot.done{background:var(--olive)}
+.rm-dot.overdue{background:var(--overdue)}
+.rm-dot.upcoming{background:var(--gold)}
+.rm-dot.optional-pending{background:var(--sky)}
+.rm-item-body{flex:1;min-width:0}
+.rm-row1{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+.rm-label{font-weight:500;color:var(--ink)}
+.rm-amount{font-weight:500;white-space:nowrap;color:var(--ink-s);font-variant-numeric:tabular-nums}
+.rm-row2{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-f);margin-top:4px;flex-wrap:wrap}
+.rm-row2-left{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rm-type-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--paper);border:1px solid var(--line-s);color:var(--ink-s);white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;font-weight:600}
+.rm-type-tag.payment{background:var(--amber-bg);color:var(--amber-tx);border-color:transparent}
+.rm-type-tag.task{background:var(--blue-bg);color:var(--blue-tx);border-color:transparent}
+.rm-type-tag.optional{background:#eae4f0;color:#6a5a8a;border-color:transparent}
+.rm-status-chip{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;text-transform:uppercase;font-weight:600;letter-spacing:.02em}
+.rm-status-chip.done{background:var(--green-bg);color:var(--green-tx)}
+.rm-status-chip.overdue{background:var(--overdue-bg);color:var(--overdue)}
+.rm-status-chip.upcoming{background:var(--amber-bg);color:var(--amber-tx)}
+.rm-note{font-size:12px;color:var(--ink-f);margin-top:4px;font-style:italic}
+.rm-item-acts{display:flex;gap:13px;margin-top:6px}
+.rm-item-acts button{background:none;border:none;padding:0;font-family:inherit;font-size:11px;color:var(--ink-f);cursor:pointer}
+.rm-item-acts button:hover{color:var(--olive)}
+.rm-item-acts button.rm-del:hover{color:var(--overdue)}
+.rm-add-toggle{margin-top:14px;background:none;border:1px dashed var(--line);color:var(--ink-s);border-radius:var(--rs);padding:8px 13px;font-size:12.5px;cursor:pointer;font-family:"Outfit";width:100%;text-align:center;transition:all .15s}
+.rm-add-toggle:hover{border-color:var(--olive);color:var(--olive)}
+.rm-add-form{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-s);gap:8px;flex-direction:column}
+.rm-add-form.open{display:flex}
+.rm-add-form.header-form{border-top:none;padding-top:0;margin-top:0}
+.rm-add-row{display:flex;gap:8px;flex-wrap:wrap}
+.rm-add-row input,.rm-add-row select{font-family:"Outfit";font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);flex:1;min-width:120px}
+.rm-add-row input:focus,.rm-add-row select:focus{outline:none;border-color:var(--olive)}
+.rm-type-toggle{display:flex;gap:14px;align-items:center;font-size:12.5px;color:var(--ink);flex-wrap:wrap}
+.rm-type-toggle label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.rm-type-toggle input{accent-color:var(--olive)}
+.rm-paid-check{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink)}
+.rm-edit-actions{display:flex;gap:8px}
+.rm-edit-actions button{font-family:"Outfit";font-size:12.5px;padding:7px 13px;border:none;border-radius:7px;background:var(--olive);color:#fff;cursor:pointer}
+.rm-edit-actions button.rm-btn-secondary{background:none;color:var(--ink);border:1px solid var(--line)}
+.rm-hint{font-size:11px;color:var(--ink-f)}
+.rm-card-add{background:transparent;border:1px dashed var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;justify-content:center}
+.rm-card-add .rm-add-toggle{border:none;padding:0;text-align:left;color:var(--gold);font-weight:500}
+.rm-card-add .rm-add-form{margin-top:14px}
+
+.roadmap-timeline-section{margin-top:36px}
+.roadmap-outer{position:relative;margin:0 auto;max-width:900px;padding:20px 0}
+.roadmap-line{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--line);transform:translateX(-50%)}
+.road-endpoint{position:absolute;left:50%;transform:translate(-50%,-50%);z-index:2}
+.road-endpoint-chip{background:var(--ink);color:var(--paper);font-size:12px;padding:5px 12px;border-radius:12px;white-space:nowrap;font-family:"Outfit"}
+.road-endpoint-chip.wedding{background:var(--gold);color:var(--ink)}
+.road-dot{position:absolute;left:50%;width:11px;height:11px;border-radius:50%;transform:translate(-50%,-50%);z-index:2;border:2px solid var(--paper)}
+.road-dot.done{background:var(--olive)}
+.road-dot.overdue{background:var(--overdue)}
+.road-dot.upcoming{background:var(--gold)}
+.road-item{position:absolute;width:42%;transform:translateY(-50%)}
+.road-item.side-left{right:54%;text-align:right}
+.road-item.side-right{left:54%;text-align:left}
+.road-vendor{font-size:11px;color:var(--ink-f);display:flex;gap:6px;align-items:center}
+.side-left .road-vendor{justify-content:flex-end}
+.side-right .road-vendor{justify-content:flex-start}
+.road-label-line{font-size:13.5px;font-weight:500;margin-top:2px;color:var(--ink)}
+.road-meta{font-size:11.5px;color:var(--ink-f);margin-top:3px;display:flex;gap:6px;align-items:center}
+.side-left .road-meta{justify-content:flex-end}
+.side-right .road-meta{justify-content:flex-start}
+@media(max-width:680px){
+  .roadmap-line{left:16px}
+  .road-endpoint{left:16px;transform:translate(0,-50%)}
+  .road-dot{left:16px}
+  .road-item,.road-item.side-left,.road-item.side-right{left:36px;right:auto;width:calc(100% - 46px);text-align:left}
+  .side-left .road-vendor,.side-right .road-vendor,.side-left .road-meta,.side-right .road-meta{justify-content:flex-start}
+}
+
+/* ── VENUE WORKSPACE (Ktima Irida) ─────────────────────── */
+.venue-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.venue-name{font-family:"Fraunces";font-weight:500;font-size:30px;color:var(--ink)}
+.venue-sub{color:var(--ink-s);font-size:13.5px;margin-top:4px}
+.vw-section{margin-top:20px}
+.vw-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vw-fld label{display:block;font-size:11px;font-weight:600;color:var(--ink-f);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.vw-fld input,.vw-fld textarea{width:100%;font-family:"Outfit";font-size:13.5px;padding:9px 11px;border:1px solid var(--line);border-radius:var(--rs);background:var(--paper);color:var(--ink);transition:border-color .14s}
+.vw-fld textarea{min-height:64px;resize:vertical}
+.vw-fld input:focus,.vw-fld textarea:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px rgba(116,129,89,.1)}
+.vw-fld{margin-bottom:12px}
+.vw-save-hint{font-size:11.5px;color:var(--ink-f);display:flex;align-items:center;gap:6px;margin-top:2px}
+@media(max-width:680px){.vw-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="util-row">
+  <button id="sync-badge" class="sync-badge is-off" onclick="openSyncModal()"><span class="ti ti-cloud"></span>☁ Sync Settings</button>
+</div>
+<div class="shell">
+  <header class="hero">
+    <div class="eyebrow">&#916;&#951;&#956;&#942;&#964;&#961;&#951;&#962; &amp; &#924;&#945;&#961;&#953;&#955;&#941;&#957;&#945;</div>
+    <h1 class="title">Our Wedding in <em>Athens</em></h1>
+    <div class="date-line" id="hero-date-line">30 April 2028 &middot; Sunday</div>
+    <div class="meta-line" id="hero-meta-line">200&ndash;220 guests &middot; Ktima Irida</div>
+    <div class="rule"></div>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button class="active" data-tab="roadmap"><span class="ti ti-route"></span>Roadmap</button>
+    <button data-tab="venues"><span class="ti ti-building-castle"></span>Venue</button>
+    <button data-tab="vendors"><span class="ti ti-camera"></span>Vendors</button>
+    <button data-tab="guests"><span class="ti ti-users"></span>Guests</button>
+  </nav>
+  <section class="panel show" id="roadmap"></section>
+  <section class="panel" id="venues"></section>
+  <section class="panel" id="vendors"></section>
+  <section class="panel" id="guests"></section>
+  <footer>Saved automatically in this browser &middot; WedPlan &middot; 30 April 2028</footer>
+</div>
+<div class="modal-bg" id="mbg">
+  <div class="modal">
+    <div class="modal-h" id="mt">Edit</div>
+    <div class="modal-b" id="mb"></div>
+    <div class="modal-f">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="ms"><span class="ti ti-check"></span>Save</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="sync-mbg">
+  <div class="modal">
+    <div class="modal-h">&#9729; Sync Settings</div>
+    <div class="modal-b">
+      <p style="font-size:12.5px;color:var(--ink-s);line-height:1.6;margin-bottom:16px">WedPlan keeps a local copy in this browser at all times. Connect your Google Sheet to sync between your devices &mdash; this uses a Sheet completely separate from any other planner.</p>
+      <div class="fld"><label>Script link <span style="text-transform:none;font-weight:400">(Web app URL, ends in /exec)</span></label><input id="sy-url" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
+      <div class="fld"><label>Password</label><input id="sy-pw" type="password" placeholder="The TOKEN set in the script"></div>
+      <div class="sync-status-line" id="sy-status">Not connected &mdash; changes are saved to this browser only.</div>
+      <div class="sync-actions">
+        <button class="btn btn-primary" id="sy-connect-btn" onclick="uiConnectSheet()"><span class="ti ti-plug-connected"></span>Connect</button>
+        <button class="btn btn-ghost" id="sy-pull-btn" onclick="uiSyncNow()"><span class="ti ti-refresh"></span>Sync now</button>
+        <button class="btn btn-ghost" id="sy-disconnect-btn" onclick="uiDisconnect()"><span class="ti ti-plug-connected-x"></span>Disconnect</button>
+        <a class="btn btn-ghost" id="sy-sheet-link" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none"><span class="ti ti-table"></span>Open my Google Sheet</a>
+      </div>
+      <div class="sync-status-line" style="margin:18px 0 0">Backup (JSON) &mdash; import also accepts the old JSONBin bin JSON.</div>
+      <div class="sync-actions">
+        <button class="btn btn-ghost" onclick="uiDownloadBackup()"><span class="ti ti-download"></span>Download backup</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('sy-import-file').click()"><span class="ti ti-upload"></span>Import backup</button>
+        <input type="file" id="sy-import-file" accept=".json,.txt,application/json,text/plain" style="display:none" onchange="uiImportBackup(this)">
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-ghost" onclick="closeSyncModal()">Close</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   WedPlan — independent wedding planner
+   Storage: localStorage key "wedplan_state_v1" (local cache, always on)
+   Sync:    your own Google Sheet through an Apps Script web app (SheetSync),
+            configured by the user via ☁ Sync Settings —
+            no script link / password is hard-coded anywhere in this file.
+   ══════════════════════════════════════════════════════════════════ */
+
+const WEDDING_DATE_ISO = '2028-04-30';
+const LS_KEY       = 'wedplan_state_v1';
+
+let charts = {};
+
+const euro = n => '€' + Math.round(Number(n)||0).toLocaleString('en-US');
+const esc  = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function fmtDate(str){ const d=new Date(str+'T00:00:00'); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function fmtDateObj(d){ return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function parseAmt(v){ if(v===''||v===null||v===undefined) return null; const n=parseFloat(v); return isNaN(n)?null:n; }
+function downloadCSV(rows, filename){
+  const csv = '﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download=filename; a.click();
+  toast('CSV downloaded');
+}
+
+/* ── DEFAULT / EMPTY STATE ──────────────────────────────────────────
+   WedPlan starts clean — it does NOT import main's real guest list,
+   vendor shortlist or budget data. Everything here is populated by
+   the user from scratch (see the QA checklist / assumptions notes). */
+function defaultState() {
+  return {
+    budgetCap: 40000,
+    roadmapCards: [],
+    venue: {
+      name:'Ktima Irida', contactPerson:'', phone:'', email:'', address:'', website:'',
+      cateringContract:'', contractAmount:'', deposit:'', paymentSchedule:'', includedServices:'',
+      guestsCovered:'', menuInfo:'', drinksBar:'', vatInfo:'', contractNotes:'', importantDates:'',
+      decoration:'', furniture:'', lighting:'', sound:'', ceremony:'', parking:'', accommodation:'',
+      setupTeardown:'', timingRestrictions:'', additionalServices:'', extras:'', miscNotes:''
+    },
+    vendors: [],
+    guests: []
+  };
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { const parsed = JSON.parse(raw); return Object.assign(defaultState(), parsed); }
+  } catch(e) {}
+  return defaultState();
+}
+let state = loadState();
+
+/* ── SYNC META: every synced item needs a unique id and a stable order ── */
+function ensureSyncMeta(s) {
+  const fix = (arr, prefix, seen) => {
+    let max = -1;
+    arr.forEach(x => { if (typeof x.order==='number' && x.order>max) max = x.order; });
+    arr.forEach(x => {
+      if (!x.id || seen.has(String(x.id))) x.id = prefix + Date.now() + Math.random().toString(36).slice(2,7);
+      seen.add(String(x.id));
+      if (typeof x.order!=='number') x.order = ++max;
+    });
+  };
+  s.roadmapCards = s.roadmapCards || []; s.vendors = s.vendors || []; s.guests = s.guests || [];
+  const itemIds = new Set(), profIds = new Set();
+  fix(s.roadmapCards, 'rc', new Set());
+  s.roadmapCards.forEach(c => { c.items = c.items || []; fix(c.items, 'ri', itemIds); });
+  fix(s.vendors, 'vd', new Set());
+  s.vendors.forEach(v => { v.professionals = v.professionals || []; fix(v.professionals, 'p', profIds); });
+  fix(s.guests, 'g', new Set());
+}
+ensureSyncMeta(state);
+
+function save() {
+  ensureSyncMeta(state);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+  SheetSync.changed();
+}
+
+let _syncConnected = false, _syncBooted = false, _remoteApplied = false, _connecting = false;
+function syncConfigured(){ return _syncConnected; }
+
+function setSyncBadge(status) {
+  const el = document.getElementById('sync-badge');
+  if (!el) return;
+  const map = {
+    off:     ['is-off',     '<span class="ti ti-cloud"></span>☁ Sync Settings'],
+    syncing: ['is-syncing', '<span class="spin">⟳</span> Syncing…'],
+    synced:  ['is-synced',  '☁ Synced'],
+    error:   ['is-error',   '⚠ Offline — saved locally'],
+    updated: ['is-updated', '✨ Updated'],
+  };
+  const [cls, html] = map[status] || map.off;
+  el.className = 'sync-badge ' + cls;
+  el.innerHTML = html;
+  if (status === 'updated') setTimeout(() => setSyncBadge(syncConfigured() ? 'synced' : 'off'), 4000);
+}
+
+function renderAll(){ renderRoadmap(); renderVenue(); renderVendors(); renderGuests(); }
+
+/* ── SHEET SYNC WIRING: state <-> records ─────────────────────────────
+   Tabs in the Sheet: settings, venue, cards, items, vendors, suppliers, guests */
+function keepRefs(oldArr, newArr) {   // keep object identity so an open modal still edits the live object
+  const m = new Map((oldArr||[]).map(o => [o.id, o]));
+  return newArr.map(n => { const o = m.get(n.id); if (!o) return n; Object.keys(o).forEach(k => delete o[k]); return Object.assign(o, n); });
+}
+function wedToRecords() {
+  const { roadmapCards, venue, vendors, guests, ...rest } = state;
+  const r = { settings: { main: rest }, venue: { main: venue || {} }, cards: {}, items: {}, vendors: {}, suppliers: {}, guests: {} };
+  (roadmapCards||[]).forEach(c => {
+    const { items, ...card } = c; r.cards[c.id] = card;
+    (items||[]).forEach(i => { r.items[i.id] = { ...i, cardId: c.id }; });
+  });
+  (vendors||[]).forEach(v => {
+    const { professionals, ...vd } = v; r.vendors[v.id] = vd;
+    (professionals||[]).forEach(p => { r.suppliers[p.id] = { ...p, vendorId: v.id }; });
+  });
+  (guests||[]).forEach(g => { r.guests[g.id] = g; });
+  return r;
+}
+function wedFromRecords(r) {
+  const byOrder = (a,b) => (a.order||0) - (b.order||0);
+  const vals = c => Object.values(r[c] || {}).map(x => ({ ...x })).sort(byOrder);
+  const ns = defaultState();
+  if (r.settings && r.settings.main) Object.assign(ns, r.settings.main);
+  if (r.venue && r.venue.main) ns.venue = Object.assign(ns.venue, r.venue.main);
+  const cards = vals('cards').map(c => ({ ...c, items: [] }));
+  const cMap = new Map(cards.map(c => [c.id, c]));
+  vals('items').forEach(i => { const c = cMap.get(i.cardId); delete i.cardId; if (c) c.items.push(i); });
+  const vendors = vals('vendors').map(v => ({ ...v, professionals: [] }));
+  const vMap = new Map(vendors.map(v => [v.id, v]));
+  vals('suppliers').forEach(p => { const v = vMap.get(p.vendorId); delete p.vendorId; if (v) v.professionals.push(p); });
+  ns.roadmapCards = keepRefs(state.roadmapCards, cards);
+  ns.vendors      = keepRefs(state.vendors, vendors);
+  ns.guests       = keepRefs(state.guests, vals('guests'));
+  state = ns;
+  ensureSyncMeta(state);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+  if (_syncBooted && !_connecting) _remoteApplied = true;
+  renderAll();
+}
+function onSyncStatus(s) {
+  _syncConnected = s.state !== 'local';
+  if (s.state !== 'syncing') _syncBooted = true;
+  const map = { local:'off', pending:'syncing', syncing:'syncing', synced:'synced', error:'error' };
+  let st = map[s.state] || 'off';
+  if (st === 'synced' && _remoteApplied) { _remoteApplied = false; st = 'updated'; toast('✨ Synced from another device'); }
+  setSyncBadge(st);
+  const el = document.getElementById('sync-badge'); if (el) el.title = s.text;
+  if (document.getElementById('sync-mbg').classList.contains('show')) updateSyncModalStatus(s);
+}
+
+/* ── SYNC SETTINGS MODAL ────────────────────────────────────────────── */
+function openSyncModal() {
+  const i = SheetSync.info();
+  document.getElementById('sy-url').value = i.url || '';
+  document.getElementById('sy-pw').value  = i.token || '';
+  document.getElementById('sync-mbg').classList.add('show');
+  updateSyncModalStatus(i.status);
+}
+function closeSyncModal(){ document.getElementById('sync-mbg').classList.remove('show'); }
+function updateSyncModalStatus(s, errMsg) {
+  const statusEl = document.getElementById('sy-status');
+  const link = document.getElementById('sy-sheet-link');
+  const ls = localSyncInfo(), i = { sheetUrl: ls.sheetUrl, lastSync: ls.at };   // read directly: SheetSync.info() would call back into onStatus
+  if (errMsg) {
+    statusEl.innerHTML = '<span class="ti ti-alert-triangle" style="color:var(--overdue)"></span> ' + esc(errMsg);
+  } else if (s && s.state !== 'local') {
+    const icon = s.state==='error' ? '<span class="ti ti-alert-triangle" style="color:var(--overdue)"></span>' : '<span class="ti ti-circle-check" style="color:var(--olive)"></span>';
+    const when = i.lastSync ? ' · last sync ' + new Date(i.lastSync).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    statusEl.innerHTML = icon + ' Connected — ' + esc(s.text) + esc(when);
+  } else {
+    statusEl.textContent = 'Not connected — changes are saved to this browser only.';
+  }
+  if (i.sheetUrl && s && s.state !== 'local') { link.href = i.sheetUrl; link.style.display = ''; } else { link.style.display = 'none'; }
+}
+function localSyncInfo(){ try { return JSON.parse(localStorage.getItem('sheetsync_wedplan') || '{}'); } catch(e) { return {}; } }
+function hasLocalData(){ return !!((state.guests||[]).length || (state.roadmapCards||[]).length || (state.vendors||[]).length); }
+function syncErrText(e){ const m = (e && e.message) || String(e); return /Failed to fetch|NetworkError|Load failed/i.test(m) ? 'could not reach the link (check it, and that you are online)' : m; }
+
+async function uiConnectSheet() {
+  const url = document.getElementById('sy-url').value.trim();
+  const pw  = document.getElementById('sy-pw').value.trim();
+  if (!url || !pw) { toast('Enter both the script link and the password'); return; }
+  if (!/^https:\/\/\S+\/exec(\?\S*)?$/.test(url)) { updateSyncModalStatus(null, 'The script link should start with https:// and end in /exec'); toast('Check the script link'); return; }
+  const btn = document.getElementById('sy-connect-btn'); btn.disabled = true; btn.textContent = 'Connecting…';
+  try {
+    const p = await SheetSync.ping(url, pw);
+    let mode = 'merge';
+    if (p.count > 0) mode = !hasLocalData() || confirm("The Sheet already has data.\n\nOK = use the Sheet's data on this device (recommended)\nCancel = merge this device's data into the Sheet") ? 'sheet' : 'merge';
+    _connecting = true;
+    await SheetSync.connect(url, pw, mode);
+    _connecting = false;
+    updateSyncModalStatus(SheetSync.info().status);
+    toast('Connected ✓');
+  } catch(e) {
+    _connecting = false;
+    updateSyncModalStatus(null, 'Could not connect — ' + syncErrText(e));
+    toast('Could not connect — ' + syncErrText(e));
+  }
+  btn.disabled = false; btn.innerHTML = '<span class="ti ti-plug-connected"></span>Connect';
+}
+function uiSyncNow() {
+  if (!syncConfigured()) { toast('Connect your Sheet first'); return; }
+  SheetSync.syncNow().then(() => { updateSyncModalStatus(SheetSync.info().status); toast('Synced ✓'); })
+    .catch(e => { updateSyncModalStatus(null, 'Sync failed — ' + syncErrText(e)); toast('Sync failed — saved locally'); });
+}
+function uiDisconnect() {
+  if (!confirm('Disconnect sync? Your data stays in this browser.')) return;
+  SheetSync.disconnect(); updateSyncModalStatus(SheetSync.info().status); toast('Disconnected');
+}
+function uiDownloadBackup() {
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ v: Date.now(), state }, null, 2)], { type:'application/json' }));
+  a.download = 'WedPlan_backup_' + d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + '.json'; a.click();
+  toast('Backup downloaded');
+}
+function uiImportBackup(input) {
+  const f = input.files && input.files[0]; input.value = '';
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    let j; try { j = JSON.parse(rd.result); } catch(e) { toast('Not a valid JSON file'); return; }
+    const rec = (j && j.record) || j;                       // JSONBin export wraps it in "record"
+    const st  = rec && rec.state ? rec.state : rec;          // WedPlan backup / bin = {v, state}
+    if (!st || typeof st !== 'object' || !(st.guests || st.roadmapCards || st.vendors || st.venue)) { toast('Not a WedPlan backup'); return; }
+    if (!confirm('Replace everything on this device with this backup?' + (syncConfigured() ? '\n\nIt will also be synced to your Google Sheet.' : ''))) return;
+    state = Object.assign(defaultState(), st);
+    save(); renderAll(); toast('Backup imported ✓');
+  };
+  rd.readAsText(f);
+}
+
+/* ── TABS ───────────────────────────────────────────────────────────── */
+document.getElementById('tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button'); if (!btn) return;
+  const tab = btn.dataset.tab;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b===btn));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('show', p.id===tab));
+  if (tab==='roadmap') setTimeout(() => { renderRoadmapCharts(); buildRoadmapTimeline(); }, 80);
+  if (tab==='guests')  setTimeout(renderGuestCharts, 80);
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ── GENERIC MODAL ──────────────────────────────────────────────────── */
+let _onSave = null;
+function modal(title, body, onSave) {
+  document.getElementById('mt').textContent = title;
+  document.getElementById('mb').innerHTML = body;
+  _onSave = onSave;
+  document.getElementById('mbg').classList.add('show');
+  setTimeout(() => { const f=document.querySelector('#mb input'); if (f) f.focus(); }, 60);
+}
+function closeModal(){ document.getElementById('mbg').classList.remove('show'); _onSave=null; }
+document.getElementById('ms').addEventListener('click', () => { if (_onSave && _onSave()!==false) closeModal(); });
+document.getElementById('mbg').addEventListener('click', e => { if (e.target.id==='mbg') closeModal(); });
+document.getElementById('sync-mbg').addEventListener('click', e => { if (e.target.id==='sync-mbg') closeSyncModal(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') { closeModal(); closeSyncModal(); } });
+
+/* ══════════════════════════════════════════════════════════════════
+   ROADMAP TAB — Overview (top) + Budget summary/graphs (middle)
+   + Payment/Task/Optional cards & timeline (bottom, from
+   wedding_payments_test.html), all driven by ONE data model:
+   state.roadmapCards = [{id,name,category,contracted,items:[
+     {id,label,type:'payment'|'task'|'optional',amount,due,done,note}
+   ]}]
+   ══════════════════════════════════════════════════════════════════ */
+let rmEditing = null, rmCardEditing = null, rmAddingCard = false;
+
+function rmAllItems(){ return (state.roadmapCards||[]).flatMap(c => c.items.map(i => ({...i, cardId:c.id, cardName:c.name}))); }
+function rmPaymentsTotal(){ return rmAllItems().filter(i=>i.type==='payment').reduce((s,i)=>s+(i.amount||0),0); }
+function rmOptionalTotal(){ return rmAllItems().filter(i=>i.type==='optional').reduce((s,i)=>s+(i.amount||0),0); }
+function rmPaidTotal(){ return rmAllItems().filter(i=>i.type==='payment' && i.done).reduce((s,i)=>s+(i.amount||0),0); }
+function rmPlusOptionalTotal(){ return rmPaymentsTotal() + rmOptionalTotal(); }
+function rmCategoryTotals(){
+  const t = {};
+  (state.roadmapCards||[]).forEach(c => {
+    const sum = c.items.filter(i=>i.type!=='task').reduce((s,i)=>s+(i.amount||0),0);
+    if (sum) t[c.name] = (t[c.name]||0) + sum;
+  });
+  return t;
+}
+function rmFindCard(cId){ return (state.roadmapCards||[]).find(c=>c.id===cId); }
+function rmStatusOf(item){
+  if (item.done) return 'done';
+  if (!item.due) return item.type==='optional' ? 'optional-pending' : 'upcoming';
+  const due = new Date(item.due+'T00:00:00');
+  const t = new Date(); t.setHours(0,0,0,0);
+  return due < t ? 'overdue' : 'upcoming';
+}
+function rmStatusLabel(status,type){
+  if (status==='done') return type==='task' ? 'Done' : 'Paid';
+  if (status==='overdue') return 'Overdue';
+  if (status==='optional-pending') return 'Optional';
+  return 'Upcoming';
+}
+function rmTypeLabel(t){ return t==='payment' ? 'Payment' : t==='optional' ? 'Optional' : 'Task'; }
+
+function renderRoadmap() {
+  const cards = state.roadmapCards || [];
+  const guestsCount = state.guests.length;
+  const cap = state.budgetCap || 0;
+  const paymentsTotal = rmPaymentsTotal();
+  const optionalTotal = rmOptionalTotal();
+  const plusOptional  = rmPlusOptionalTotal();
+  const paidTotal     = rmPaidTotal();
+  const over = paymentsTotal > cap;
+  const pct  = cap > 0 ? Math.round(paymentsTotal/cap*100) : 0;
+  const rem  = cap - paymentsTotal;
+
+  document.getElementById('roadmap').innerHTML = `
+    <h2 class="sec">The plan at a glance</h2>
+    <p class="sec-sub">Everything for 30 April 2028 — the overview, live budget, and the payment/task roadmap all in one place. Saves automatically in this browser${syncConfigured()?' and syncs to your connected devices.':'.'}</p>
+    <div class="stat-grid">
+      <div class="stat" style="--acc:var(--terra)"><div class="sl">Wedding date</div><div class="sv" style="font-size:21px">30 Apr 2028</div><div class="ss">Sunday · Athens</div></div>
+      <div class="stat" style="--acc:var(--olive)"><div class="sl">Guests listed</div><div class="sv">${guestsCount}</div><div class="ss">target 200–220</div></div>
+      <div class="stat" style="--acc:var(--gold)"><div class="sl">Venue</div><div class="sv" style="font-size:20px">Ktima Irida</div><div class="ss">booked</div></div>
+      <div class="stat" style="--acc:${over?'var(--overdue)':'var(--sky)'}"><div class="sl">Payments vs budget</div><div class="sv" style="font-size:20px;color:${over?'var(--overdue)':'inherit'}">${euro(paymentsTotal)}</div><div class="ss">${over?euro(-rem)+' over cap':euro(rem)+' headroom'}</div></div>
+    </div>
+
+    <h3 class="subsec">Budget summary</h3>
+    <p class="sec-sub">Payments are the normal wedding costs. Optional items are extras you may or may not add. Tasks never count toward money.</p>
+    ${over?`<div class="banner"><span class="ti ti-alert-triangle"></span><span><b>Payments (${euro(paymentsTotal)}) exceed your budget by ${euro(-rem)}.</b></span></div>`:''}
+
+    <div class="bud-header-bar">
+      <div class="bud-ring-wrap">
+        <div class="bud-ring-svg">
+          <svg width="68" height="68" viewBox="0 0 68 68">
+            <circle cx="34" cy="34" r="28" fill="none" stroke="#e3d8bc" stroke-width="5"/>
+            <circle cx="34" cy="34" r="28" fill="none" stroke="${over?'var(--overdue)':'var(--olive)'}" stroke-width="5"
+              stroke-dasharray="175.9" stroke-dashoffset="${175.9 - Math.min(pct/100,1)*175.9}"
+              stroke-linecap="round" style="transition:stroke-dashoffset .5s ease,stroke .4s"/>
+          </svg>
+          <div class="bud-ring-pct" style="color:${over?'var(--overdue)':'var(--olive)'}">${pct}%</div>
+        </div>
+        <div class="bud-ring-stats">
+          <div class="bud-rs-label">Budget</div><div class="bud-rs-value">${euro(cap)}</div>
+          <div class="bud-rs-label">Payments</div><div class="bud-rs-value">${euro(paymentsTotal)}</div>
+          <div class="bud-rs-label">Remaining</div><div class="bud-rs-value ${over?'over':'under'}">${euro(Math.abs(rem))}</div>
+        </div>
+      </div>
+      <button class="bud-set-btn" onclick="openBudgetCapModal()"><span class="ti ti-settings"></span> Change budget</button>
+    </div>
+
+    <div class="bud-summary">
+      <div class="bud-scard">
+        <div class="bud-sc-label">Payments</div>
+        <div class="bud-sc-value gold">${euro(paymentsTotal)}</div>
+        <div class="bud-sc-sub">Normal wedding costs</div>
+        <div class="bud-progress"><div class="bud-prog-fill${over?' over':''}" style="width:${Math.min(pct,100)}%"></div></div>
+      </div>
+      <div class="bud-scard">
+        <div class="bud-sc-label">+ Optional</div>
+        <div class="bud-sc-value" style="color:var(--ink-s)">${euro(plusOptional)}</div>
+        <div class="bud-sc-sub">Payments + Optional (${euro(optionalTotal)})</div>
+      </div>
+      <div class="bud-scard">
+        <div class="bud-sc-label">Paid</div>
+        <div class="bud-sc-value green">${euro(paidTotal)}</div>
+        <div class="bud-sc-sub">Marked as paid so far</div>
+      </div>
+      <div class="bud-scard">
+        <div class="bud-sc-label">Remaining budget</div>
+        <div class="bud-sc-value ${over?'red':'green'}">${euro(Math.abs(rem))}</div>
+        <div class="bud-sc-sub">${over?'⚠ '+pct+'% over':pct+'% used'}</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-box card pad"><div class="blk-title"><span class="ti ti-chart-donut-3"></span>By category</div><div style="height:230px;position:relative"><canvas id="chart-rmcat"></canvas></div></div>
+      <div class="chart-box card pad"><div class="blk-title"><span class="ti ti-chart-bar"></span>Budget vs Κόστος</div><div style="height:230px;position:relative"><canvas id="chart-rmbar"></canvas></div></div>
+    </div>
+
+    <h3 class="subsec">Payments, tasks &amp; optional items</h3>
+    <p class="sec-sub">Group entries by vendor or theme. Each card can hold Payments, Tasks and Optional items together — toggle the dot to mark something done or paid.</p>
+    <div class="editbar">
+      <div style="font-size:13px;color:var(--ink-s)">${cards.length} cards · ${rmAllItems().length} items</div>
+      <button class="btn btn-ghost" onclick="exportRoadmapCSV()"><span class="ti ti-download"></span>CSV</button>
+    </div>
+    <div class="rm-grid" id="rm-grid">${cards.map((c,ci)=>rmCardHtml(c,ci)).join('')}${rmAddCardHtml()}</div>
+
+    <div class="roadmap-timeline-section">
+      <h3 class="subsec">Wedding roadmap</h3>
+      <p class="sec-sub">Every payment, task and optional item, in order, from today to the wedding day.</p>
+      <div class="roadmap-outer" id="roadmap-outer"></div>
+    </div>
+  `;
+  renderRoadmapCharts();
+  buildRoadmapTimeline();
+}
+
+function rmCardHtml(vendor) {
+  const hasBudget = vendor.contracted !== null && vendor.contracted !== undefined && vendor.contracted !== '';
+  const doneTotal = vendor.items.filter(i=>i.type==='payment' && i.done && i.amount).reduce((s,i)=>s+i.amount,0);
+  const pct = (hasBudget && vendor.contracted>0) ? Math.round((doneTotal/vendor.contracted)*100) : 0;
+  const defaultType = hasBudget ? 'payment' : 'task';
+
+  const headerHtml = (rmCardEditing === vendor.id) ? `
+    <div class="rm-add-form open header-form">
+      <div class="rm-add-row">
+        <input type="text" id="rmc-name-${vendor.id}" value="${esc(vendor.name)}" placeholder="Name">
+        <input type="text" id="rmc-cat-${vendor.id}" value="${esc(vendor.category||'')}" placeholder="Category (optional)">
+      </div>
+      <label class="rm-paid-check"><input type="checkbox" id="rmc-hasbud-${vendor.id}" ${hasBudget?'checked':''} onchange="document.getElementById('rmc-budrow-${vendor.id}').style.display=this.checked?'flex':'none'">Track a contracted total for this card</label>
+      <div class="rm-add-row" id="rmc-budrow-${vendor.id}" style="display:${hasBudget?'flex':'none'}">
+        <input type="number" id="rmc-contracted-${vendor.id}" value="${hasBudget?vendor.contracted:''}" placeholder="Contracted total (€)">
+      </div>
+      <div class="rm-edit-actions">
+        <button onclick="rmSaveCardEdit('${vendor.id}')">Save</button>
+        <button class="rm-btn-secondary" onclick="rmCancelCardEdit()">Cancel</button>
+      </div>
+    </div>
+  ` : `
+    <div class="rm-card-top">
+      <div><p class="rm-name">${esc(vendor.name)}</p>${vendor.category?`<div class="rm-cat">${esc(vendor.category)}</div>`:''}</div>
+      ${hasBudget?`<div class="rm-contracted">Contracted<strong>${euro(vendor.contracted)}</strong></div>`:''}
+    </div>
+    <div class="rm-card-acts">
+      <button class="icobtn" onclick="rmStartCardEdit('${vendor.id}')" title="Edit card"><span class="ti ti-pencil"></span></button>
+      <button class="icobtn del" onclick="rmDeleteCard('${vendor.id}')" title="Delete card"><span class="ti ti-trash"></span></button>
+    </div>
+    ${hasBudget?`
+      <div class="rm-progress-row">
+        <div class="rm-progress-track"><div class="rm-progress-fill" style="width:${Math.min(pct,100)}%"></div></div>
+        <div class="rm-progress-label"><span>${euro(doneTotal)} paid</span><span>${euro(Math.max(vendor.contracted-doneTotal,0))} remaining</span></div>
+      </div>` : ''}
+  `;
+
+  const itemsHtml = vendor.items.map((item) => {
+    const key = vendor.id+'__'+item.id;
+    return (rmEditing===key) ? rmEditItemHtml(vendor,item,key) : rmItemHtml(vendor,item,key);
+  }).join('');
+
+  return `<div class="rm-card${hasBudget?' has-budget':''}" id="rmcard-${vendor.id}">
+    ${headerHtml}
+    <div class="rm-timeline">${itemsHtml || '<div class="prof-empty">No items yet — add a payment, task or optional item below.</div>'}</div>
+    <button class="rm-add-toggle" onclick="rmToggleForm('${vendor.id}')">+ Add payment, task or optional item</button>
+    <div class="rm-add-form" id="rmform-${vendor.id}">
+      <div class="rm-type-toggle">
+        <label><input type="radio" name="rmtype-add-${vendor.id}" value="payment" ${defaultType==='payment'?'checked':''}>Payment</label>
+        <label><input type="radio" name="rmtype-add-${vendor.id}" value="task" ${defaultType==='task'?'checked':''}>Task</label>
+        <label><input type="radio" name="rmtype-add-${vendor.id}" value="optional">Optional</label>
+      </div>
+      <div class="rm-add-row">
+        <input type="text" id="rmlabel-${vendor.id}" placeholder="Label (e.g. Deposit, Send invitations)">
+        <input type="number" id="rmamount-${vendor.id}" placeholder="Amount € (optional)">
+      </div>
+      <div class="rm-add-row">
+        <input type="date" id="rmdue-${vendor.id}">
+        <input type="text" id="rmnote-${vendor.id}" placeholder="Note (optional)">
+      </div>
+      <span class="rm-hint">Leave amount blank for tasks. Optional items count toward "+ Optional" only.</span>
+      <div class="rm-edit-actions"><button onclick="rmAddItem('${vendor.id}')">Add</button></div>
+    </div>
+  </div>`;
+}
+
+function rmItemHtml(vendor,item) {
+  const status = rmStatusOf(item);
+  return `<div class="rm-item">
+    <div class="rm-dot-col"><div class="rm-dot ${status}" title="Click to toggle done" onclick="rmToggleDone('${vendor.id}','${item.id}')"></div></div>
+    <div class="rm-item-body">
+      <div class="rm-row1"><span class="rm-label">${esc(item.label)}</span>${item.amount?`<span class="rm-amount">${euro(item.amount)}</span>`:''}</div>
+      <div class="rm-row2">
+        <div class="rm-row2-left"><span class="rm-type-tag ${item.type}">${rmTypeLabel(item.type)}</span><span>${item.due?fmtDate(item.due):'No date'}</span></div>
+        <span class="rm-status-chip ${status}">${rmStatusLabel(status,item.type)}</span>
+      </div>
+      ${item.note?`<div class="rm-note">${esc(item.note)}</div>`:''}
+      <div class="rm-item-acts">
+        <button onclick="rmStartEdit('${vendor.id}','${item.id}')">Edit</button>
+        <button class="rm-del" onclick="rmDeleteItem('${vendor.id}','${item.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function rmEditItemHtml(vendor,item,key) {
+  return `<div class="rm-item">
+    <div class="rm-add-form open" style="width:100%">
+      <div class="rm-type-toggle">
+        <label><input type="radio" name="rmtype-edit-${key}" value="payment" ${item.type==='payment'?'checked':''}>Payment</label>
+        <label><input type="radio" name="rmtype-edit-${key}" value="task" ${item.type==='task'?'checked':''}>Task</label>
+        <label><input type="radio" name="rmtype-edit-${key}" value="optional" ${item.type==='optional'?'checked':''}>Optional</label>
+      </div>
+      <div class="rm-add-row">
+        <input type="text" id="rme-label-${key}" value="${esc(item.label)}" placeholder="Label">
+        <input type="number" id="rme-amount-${key}" value="${item.amount==null?'':item.amount}" placeholder="Amount (optional)">
+      </div>
+      <div class="rm-add-row">
+        <input type="date" id="rme-due-${key}" value="${item.due||''}">
+        <input type="text" id="rme-note-${key}" value="${esc(item.note||'')}" placeholder="Note (optional)">
+      </div>
+      <label class="rm-paid-check"><input type="checkbox" id="rme-done-${key}" ${item.done?'checked':''}>Mark as ${item.type==='task'?'done':'paid'}</label>
+      <div class="rm-edit-actions">
+        <button onclick="rmSaveEdit('${vendor.id}','${item.id}')">Save</button>
+        <button class="rm-btn-secondary" onclick="rmCancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function rmAddCardHtml() {
+  return `<div class="rm-card rm-card-add">
+    <button class="rm-add-toggle" onclick="rmToggleAddCardForm()">+ Add vendor or task group</button>
+    <div class="rm-add-form ${rmAddingCard?'open':''}" id="rm-addcard-form">
+      <div class="rm-add-row">
+        <input type="text" id="rm-newcard-name" placeholder="Name (e.g. Hair & makeup)">
+        <input type="text" id="rm-newcard-cat" placeholder="Category (optional)">
+      </div>
+      <label class="rm-paid-check"><input type="checkbox" id="rm-newcard-budget" onchange="document.getElementById('rm-newcard-budrow').style.display=this.checked?'flex':'none'">Track a contracted total</label>
+      <div class="rm-add-row" id="rm-newcard-budrow" style="display:none">
+        <input type="number" id="rm-newcard-contracted" placeholder="Contracted total (€)">
+      </div>
+      <div class="rm-edit-actions"><button onclick="rmAddCard()">Add card</button></div>
+    </div>
+  </div>`;
+}
+
+function rmToggleDone(cId,iId){ const c=rmFindCard(cId); const it=c.items.find(i=>i.id===iId); it.done=!it.done; save(); renderRoadmap(); }
+function rmToggleForm(cId){ const el=document.getElementById('rmform-'+cId); if(el) el.classList.toggle('open'); }
+function rmAddItem(cId) {
+  const label = document.getElementById('rmlabel-'+cId).value.trim();
+  if (!label) { toast('Label required'); return; }
+  const amount = parseAmt(document.getElementById('rmamount-'+cId).value);
+  const due    = document.getElementById('rmdue-'+cId).value;
+  const note   = document.getElementById('rmnote-'+cId).value.trim();
+  const typeInput = document.querySelector(`input[name="rmtype-add-${cId}"]:checked`);
+  const type = typeInput ? typeInput.value : 'task';
+  const c = rmFindCard(cId);
+  c.items.push({ id:'ri'+Date.now(), label, type, amount, due, done:false, note });
+  save(); renderRoadmap(); toast('Added ✓');
+}
+function rmStartEdit(cId,iId){ rmEditing = cId+'__'+iId; renderRoadmap(); }
+function rmCancelEdit(){ rmEditing = null; renderRoadmap(); }
+function rmSaveEdit(cId,iId) {
+  const key = cId+'__'+iId;
+  const c = rmFindCard(cId); const item = c.items.find(i=>i.id===iId);
+  const label = document.getElementById('rme-label-'+key).value.trim();
+  if (!label) { toast('Label required'); return; }
+  const amount = parseAmt(document.getElementById('rme-amount-'+key).value);
+  const due    = document.getElementById('rme-due-'+key).value;
+  const note   = document.getElementById('rme-note-'+key).value.trim();
+  const done   = document.getElementById('rme-done-'+key).checked;
+  const typeInput = document.querySelector(`input[name="rmtype-edit-${key}"]:checked`);
+  const type = typeInput ? typeInput.value : 'task';
+  Object.assign(item, { label, type, amount, due, note, done });
+  rmEditing = null; save(); renderRoadmap(); toast('Saved ✓');
+}
+function rmDeleteItem(cId,iId) {
+  const c = rmFindCard(cId);
+  if (confirm('Delete this entry?')) { c.items = c.items.filter(i=>i.id!==iId); if (rmEditing===cId+'__'+iId) rmEditing=null; save(); renderRoadmap(); toast('Deleted'); }
+}
+function rmStartCardEdit(cId){ rmCardEditing = cId; renderRoadmap(); }
+function rmCancelCardEdit(){ rmCardEditing = null; renderRoadmap(); }
+function rmSaveCardEdit(cId) {
+  const name = document.getElementById('rmc-name-'+cId).value.trim();
+  if (!name) { toast('Name required'); return; }
+  const category = document.getElementById('rmc-cat-'+cId).value.trim();
+  const hasBudget = document.getElementById('rmc-hasbud-'+cId).checked;
+  const contractedVal = parseAmt(document.getElementById('rmc-contracted-'+cId).value);
+  const c = rmFindCard(cId);
+  c.name = name; c.category = category; c.contracted = hasBudget ? (contractedVal===null?0:contractedVal) : null;
+  rmCardEditing = null; save(); renderRoadmap(); toast('Card updated');
+}
+function rmDeleteCard(cId) {
+  const c = rmFindCard(cId);
+  if (confirm('Delete "'+c.name+'" and everything in it?')) { state.roadmapCards = state.roadmapCards.filter(x=>x.id!==cId); save(); renderRoadmap(); toast('Deleted'); }
+}
+function rmToggleAddCardForm(){ rmAddingCard = !rmAddingCard; renderRoadmap(); }
+function rmAddCard() {
+  const name = document.getElementById('rm-newcard-name').value.trim();
+  if (!name) { toast('Name required'); return; }
+  const category = document.getElementById('rm-newcard-cat').value.trim();
+  const hasBudget = document.getElementById('rm-newcard-budget').checked;
+  const contractedVal = parseAmt(document.getElementById('rm-newcard-contracted').value);
+  if (!state.roadmapCards) state.roadmapCards = [];
+  state.roadmapCards.push({ id:'rc'+Date.now(), name, category, contracted: hasBudget?(contractedVal===null?0:contractedVal):null, items:[] });
+  rmAddingCard = false; save(); renderRoadmap(); toast('Card added');
+}
+
+function openBudgetCapModal() {
+  modal('Set budget', `<div class="fld"><label>Total budget (€)</label><input id="bcf-cap" type="number" value="${state.budgetCap||0}" step="500"></div>`,
+  () => {
+    const v = parseFloat(document.getElementById('bcf-cap').value);
+    if (!v || v<=0) { toast('Enter a valid amount'); return false; }
+    state.budgetCap = v; save(); renderRoadmap(); toast('Budget updated ✓'); return true;
+  });
+}
+
+function renderRoadmapCharts() {
+  if (typeof Chart === 'undefined') return; // chart.js CDN unreachable — rest of the app still works
+  const catTotals = rmCategoryTotals();
+  const cats = Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
+  const PAL = ['#748159','#c9998c','#a6875f','#8b9884','#b98a9e','#7a6b8a','#4d8a7a','#a08a5a'];
+  const c1 = document.getElementById('chart-rmcat');
+  if (c1) {
+    if (charts.rmcat) charts.rmcat.destroy();
+    charts.rmcat = new Chart(c1, { type:'doughnut', data:{ labels:cats, datasets:[{ data:cats.map(c=>catTotals[c]), backgroundColor:PAL, borderWidth:2, borderColor:'#fffcf4' }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'right', labels:{ font:{family:'Outfit',size:11}, boxWidth:12, padding:8 } }, tooltip:{ callbacks:{ label: ctx => ctx.label+': '+euro(ctx.raw) } } } } });
+  }
+  const cap = state.budgetCap||0;
+  const paymentsTotal = rmPaymentsTotal(), optionalTotal = rmOptionalTotal(), plusOptional = rmPlusOptionalTotal(), paidTotal = rmPaidTotal();
+  const c2 = document.getElementById('chart-rmbar');
+  if (c2) {
+    if (charts.rmbar) charts.rmbar.destroy();
+    charts.rmbar = new Chart(c2, { type:'bar', data:{ labels:['Budget','Payments','Optional','+ Optional','Paid'], datasets:[{ data:[cap,paymentsTotal,optionalTotal,plusOptional,paidTotal], backgroundColor:['#8b9884','#a6875f','#9a8ab0','#748159','#4f5a3d'], borderRadius:8, borderSkipped:false }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => euro(ctx.raw) } } }, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'€'+Math.round(v/1000)+'k', font:{size:11} }, grid:{ color:'rgba(0,0,0,.05)' } }, x:{ grid:{display:false}, ticks:{ font:{family:'Outfit',size:11} } } } } });
+  }
+}
+
+function buildRoadmapTimeline() {
+  const container = document.getElementById('roadmap-outer');
+  if (!container) return;
+  const weddingDate = new Date(WEDDING_DATE_ISO+'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const totalSpan = weddingDate.getTime() - today.getTime();
+
+  let items = [];
+  (state.roadmapCards||[]).forEach(c => { c.items.forEach(item => { items.push({ group: c.name, ...item }); }); });
+  items.sort((a,b) => new Date(a.due||WEDDING_DATE_ISO) - new Date(b.due||WEDDING_DATE_ISO));
+
+  if (!items.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--ink-f);font-size:13px">Add payments or tasks above to see them plotted here.</p>';
+    container.style.height = 'auto';
+    return;
+  }
+
+  const MIN_GAP = 96, SCALE_HEIGHT = 900;
+  let positions = items.map(item => {
+    const dueMs = new Date((item.due||WEDDING_DATE_ISO)+'T00:00:00').getTime();
+    const pct = Math.max(0, Math.min(1, (dueMs-today.getTime())/(totalSpan||1)));
+    return pct*SCALE_HEIGHT;
+  });
+  let cursor = MIN_GAP;
+  for (let i=0;i<positions.length;i++){ positions[i]=Math.max(positions[i],cursor); cursor=positions[i]+MIN_GAP; }
+  const weddingPos = Math.max(SCALE_HEIGHT, cursor);
+  const roadmapHeight = weddingPos + MIN_GAP;
+  container.style.height = roadmapHeight+'px';
+
+  let html = `<div class="roadmap-line"></div>`;
+  html += `<div class="road-endpoint" style="top:0px"><span class="road-endpoint-chip">Today — ${fmtDateObj(today)}</span></div>`;
+  html += `<div class="road-endpoint" style="top:${weddingPos}px"><span class="road-endpoint-chip wedding">Wedding day — ${fmtDateObj(weddingDate)}</span></div>`;
+
+  items.forEach((item, idx) => {
+    const status = rmStatusOf(item);
+    const side = idx % 2 === 0 ? 'side-left' : 'side-right';
+    const top = positions[idx];
+    html += `<div class="road-dot ${status==='optional-pending'?'upcoming':status}" style="top:${top}px"></div>`;
+    html += `<div class="road-item ${side}" style="top:${top}px">
+      <div class="road-vendor"><span>${esc(item.group)}</span><span class="rm-type-tag ${item.type}">${rmTypeLabel(item.type)}</span></div>
+      <div class="road-label-line">${esc(item.label)}${item.amount?' — '+euro(item.amount):''}</div>
+      <div class="road-meta"><span>${item.due?fmtDate(item.due):'No date'}</span><span class="rm-status-chip ${status}">${rmStatusLabel(status,item.type)}</span></div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function exportRoadmapCSV() {
+  const rows = [['Card','Category','Label','Type','Amount','Due','Done','Note']];
+  (state.roadmapCards||[]).forEach(c => { c.items.forEach(i => { rows.push([c.name, c.category||'', i.label, i.type, i.amount==null?'':i.amount, i.due||'', i.done?'Yes':'No', i.note||'']); }); });
+  downloadCSV(rows, 'wedplan_roadmap.csv');
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   VENUES TAB — Ktima Irida contract & arrangements workspace
+   (no scoring / comparison — the venue is booked)
+   ══════════════════════════════════════════════════════════════════ */
+function renderVenue() {
+  const v = state.venue || {};
+  document.getElementById('venues').innerHTML = `
+    <h2 class="sec">Venue</h2>
+    <p class="sec-sub">Our venue is booked — this is a workspace for the contract, catering, and every arrangement, not a comparison tool.</p>
+    <div class="card pad">
+      <div class="venue-hero">
+        <div><div class="venue-name">Ktima Irida</div><div class="venue-sub">Athens · booked for 30 April 2028</div></div>
+      </div>
+
+      <div class="vw-section">
+        <div class="blk-title"><span class="ti ti-address-book"></span>Contact</div>
+        <div class="vw-grid">
+          ${vwField('contactPerson','Contact person',v.contactPerson)}
+          ${vwField('phone','Phone',v.phone)}
+          ${vwField('email','Email',v.email)}
+          ${vwField('address','Address / location',v.address)}
+          ${vwField('website','Website',v.website)}
+        </div>
+      </div>
+
+      <div class="vw-section">
+        <div class="blk-title"><span class="ti ti-file-invoice"></span>Contract &amp; catering</div>
+        <div class="vw-grid">
+          ${vwField('contractAmount','Contract amount (€)',v.contractAmount)}
+          ${vwField('deposit','Deposit',v.deposit)}
+          ${vwField('paymentSchedule','Payment schedule',v.paymentSchedule)}
+          ${vwField('guestsCovered','Guests covered',v.guestsCovered)}
+          ${vwField('vatInfo','VAT information',v.vatInfo)}
+          ${vwField('importantDates','Important dates',v.importantDates)}
+        </div>
+        ${vwArea('cateringContract','Catering contract details',v.cateringContract)}
+        ${vwArea('includedServices','Included services',v.includedServices)}
+        ${vwArea('menuInfo','Menu information',v.menuInfo)}
+        ${vwArea('drinksBar','Drinks / bar arrangements',v.drinksBar)}
+        ${vwArea('contractNotes','Contract notes',v.contractNotes)}
+      </div>
+
+      <div class="vw-section">
+        <div class="blk-title"><span class="ti ti-sparkles"></span>Arrangements &amp; extras</div>
+        <div class="vw-grid">
+          ${vwField('decoration','Decoration',v.decoration)}
+          ${vwField('furniture','Furniture',v.furniture)}
+          ${vwField('lighting','Lighting',v.lighting)}
+          ${vwField('sound','Sound',v.sound)}
+          ${vwField('ceremony','Ceremony arrangements',v.ceremony)}
+          ${vwField('parking','Parking',v.parking)}
+          ${vwField('accommodation','Accommodation',v.accommodation)}
+          ${vwField('setupTeardown','Setup / teardown',v.setupTeardown)}
+          ${vwField('timingRestrictions','Timing restrictions',v.timingRestrictions)}
+          ${vwField('additionalServices','Additional services',v.additionalServices)}
+        </div>
+        ${vwArea('extras','Extras',v.extras)}
+        ${vwArea('miscNotes','Miscellaneous notes',v.miscNotes)}
+      </div>
+      <div class="vw-save-hint"><span class="ti ti-device-floppy"></span>Saves automatically as you type</div>
+    </div>`;
+}
+function vwField(key,label,val){ return `<div class="vw-fld"><label>${label}</label><input value="${esc(val||'')}" onchange="vwSave('${key}',this.value)"></div>`; }
+function vwArea(key,label,val){ return `<div class="vw-fld"><label>${label}</label><textarea onchange="vwSave('${key}',this.value)">${esc(val||'')}</textarea></div>`; }
+function vwSave(key,val){ if (!state.venue) state.venue = {}; state.venue[key] = val; save(); }
+
+/* ══════════════════════════════════════════════════════════════════
+   VENDORS TAB — ported from main unchanged, re-skinned only
+   ══════════════════════════════════════════════════════════════════ */
+const PROF_STATUS = ['To contact','Contacted','Meeting booked','Quote received','Booked','Not suitable'];
+const PROF_STATUS_CLS = {'To contact':'todo','Contacted':'prog','Meeting booked':'prog','Quote received':'prog','Booked':'done','Not suitable':'dead'};
+
+function renderVendors() {
+  const booked = state.vendors.filter(v => v.status==='Ολοκληρώθηκε'||v.status==='Booked').length;
+  document.getElementById('vendors').innerHTML = `
+    <h2 class="sec">Vendors</h2>
+    <p class="sec-sub">Each vendor category tracks your budget, scope, and individual suppliers. Edit categories or manage supplier shortlists inline.</p>
+    <div class="toolbar" style="margin-bottom:18px">
+      <div style="font-size:13px;color:var(--ink-s)">${state.vendors.length} categories &nbsp;·&nbsp; ${booked} booked &nbsp;·&nbsp; ${state.vendors.reduce((s,v)=>s+(v.professionals||[]).length,0)} suppliers tracked</div>
+      <button class="btn btn-primary" onclick="openVendorModal()"><span class="ti ti-plus"></span>Add category</button>
+    </div>
+    <div class="vd-grid">${state.vendors.map((v,i) => vendorCard(v,i)).join('')}</div>`;
+}
+
+function vendorCard(v) {
+  const stMap = {'Ολοκληρώθηκε':'done','Booked':'done','Σε εξέλιξη':'prog','In progress':'prog'};
+  const stLbl = {'Ολοκληρώθηκε':'Booked','Booked':'Booked','Σε εξέλιξη':'In progress','In progress':'In progress','Δεν ξεκίνησε':'Not started'};
+  const cls = stMap[v.status]||'todo';
+  const lbl = stLbl[v.status]||v.status||'Not started';
+  const profs = (v.professionals||[]);
+  const bookedProf = profs.filter(p => p.status==='Booked').length;
+
+  const profRows = profs.map(p => {
+    const pcls = PROF_STATUS_CLS[p.status]||'todo';
+    return `<div class="prof-row" id="pr-${p.id}">
+      <div class="prof-main">
+        <div class="prof-name">
+          ${p.url ? `<a href="${esc(p.url)}" target="_blank" class="prof-link">${esc(p.name)}<span class="ti ti-external-link"></span></a>` : `<span>${esc(p.name)}</span>`}
+          <span class="pill ${pcls}" style="font-size:9px;padding:2px 7px">${esc(p.status||'To contact')}</span>
+        </div>
+        <div class="prof-note">${p.note ? esc(p.note) : '<span style="color:var(--ink-f);font-style:italic">No notes yet</span>'}</div>
+      </div>
+      <div class="prof-acts">
+        <button class="icobtn" onclick="openProfModal('${v.id}','${p.id}')" title="Edit"><span class="ti ti-pencil"></span></button>
+        <button class="icobtn del" onclick="deleteProf('${v.id}','${p.id}')" title="Delete"><span class="ti ti-trash"></span></button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="vd-card">
+    <div class="vd-top">
+      <div class="vdh"><span class="ti ${esc(v.icon||'ti-star')}"></span>${esc(v.title)}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span class="pill ${cls}">${lbl}</span>
+        <button class="icobtn" onclick="openVendorModal('${v.id}')" title="Edit category"><span class="ti ti-pencil"></span></button>
+        <button class="icobtn del" onclick="deleteVendor('${v.id}')" title="Delete category"><span class="ti ti-trash"></span></button>
+      </div>
+    </div>
+    <div class="vd-bud">${esc(v.budget)}</div>
+    <div class="vd-detail"><span class="vd-lbl">Scope</span>${esc(v.scope)}</div>
+    <div class="vd-detail"><span class="vd-lbl">Deliverable</span>${esc(v.deliverable)}</div>
+    ${v.tip ? `<div class="vd-tip"><span class="ti ti-bulb"></span>${esc(v.tip)}</div>` : ''}
+    ${v.note ? `<div class="vnote" style="margin-top:10px"><span class="ti ti-notes"></span>${esc(v.note)}</div>` : ''}
+    <div class="prof-section">
+      <div class="prof-header">
+        <span class="prof-title"><span class="ti ti-address-book"></span>Suppliers &amp; shortlist <span class="prof-count">${profs.length}${bookedProf?` · ${bookedProf} booked`:''}</span></span>
+        <button class="btn-add-prof" onclick="openProfModal('${v.id}')"><span class="ti ti-plus"></span>Add supplier</button>
+      </div>
+      <div class="prof-list" id="pl-${v.id}">
+        ${profs.length ? profRows : `<div class="prof-empty">No suppliers added yet — click <b>Add supplier</b> to build your shortlist.</div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+function openVendorModal(id) {
+  const ICONS = ['ti-camera','ti-video','ti-music','ti-flower','ti-tools-kitchen-2','ti-bulb','ti-heart','ti-scissors','ti-star','ti-confetti','ti-cake','ti-bus'];
+  const v = id ? state.vendors.find(x => x.id===id)
+               : {id:'',icon:'ti-star',title:'',budget:'',status:'Δεν ξεκίνησε',scope:'',deliverable:'',tip:'',note:'',professionals:[]};
+  modal(id?'Edit vendor category':'Add vendor category', `
+    <div class="fld-row">
+      <div class="fld"><label>Title</label><input id="df-title" value="${esc(v.title)}" placeholder="e.g. Photography"></div>
+      <div class="fld"><label>Icon</label><select id="df-icon">${ICONS.map(ic=>`<option value="${ic}"${v.icon===ic?' selected':''}>${ic.replace('ti-','')}</option>`).join('')}</select></div>
+    </div>
+    <div class="fld-row">
+      <div class="fld"><label>Budget / price range</label><input id="df-budget" value="${esc(v.budget)}" placeholder="e.g. €2,500–3,500"></div>
+      <div class="fld"><label>Status</label><select id="df-status">${['Δεν ξεκίνησε','Σε εξέλιξη','Ολοκληρώθηκε'].map(s=>`<option${v.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+    <div class="fld"><label>Scope</label><input id="df-scope" value="${esc(v.scope)}"></div>
+    <div class="fld"><label>Deliverable</label><input id="df-deliverable" value="${esc(v.deliverable)}"></div>
+    <div class="fld"><label>Tip</label><input id="df-tip" value="${esc(v.tip)}"></div>
+    <div class="fld"><label>Personal note</label><textarea id="df-note" rows="2">${esc(v.note)}</textarea></div>`,
+  () => {
+    const title = document.getElementById('df-title').value.trim();
+    if (!title) { toast('Title required'); return false; }
+    const data = { title, icon:document.getElementById('df-icon').value, budget:document.getElementById('df-budget').value.trim(), status:document.getElementById('df-status').value, scope:document.getElementById('df-scope').value.trim(), deliverable:document.getElementById('df-deliverable').value.trim(), tip:document.getElementById('df-tip').value.trim(), note:document.getElementById('df-note').value.trim() };
+    if (id) { const vd=state.vendors.find(x=>x.id===id); Object.assign(vd,data); toast('Category updated'); }
+    else { state.vendors.push({id:'vd'+Date.now(),professionals:[],...data}); toast('Category added'); }
+    save(); renderVendors(); return true;
+  });
+}
+function deleteVendor(id) {
+  const v = state.vendors.find(x=>x.id===id);
+  if (confirm('Delete "'+v.title+'" and all its suppliers?')) { state.vendors=state.vendors.filter(x=>x.id!==id); save(); renderVendors(); toast('Deleted'); }
+}
+function openProfModal(vendorId, profId) {
+  const vd = state.vendors.find(x=>x.id===vendorId);
+  const p  = profId ? (vd.professionals||[]).find(x=>x.id===profId)
+                    : {id:'',name:'',url:'',note:'',status:'To contact'};
+  modal(profId?'Edit supplier':'Add supplier', `
+    <div class="fld"><label>Name</label><input id="pf-name" value="${esc(p.name)}" placeholder="e.g. Vangelos Photography"></div>
+    <div class="fld"><label>Website / URL</label><input id="pf-url" value="${esc(p.url)}" placeholder="https://..."></div>
+    <div class="fld"><label>Status</label><select id="pf-status">${PROF_STATUS.map(s=>`<option value="${s}"${p.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="fld"><label>Notes (quote, contact info, availability…)</label><textarea id="pf-note" rows="4" placeholder="e.g. Quoted €2,800 for full day.">${esc(p.note)}</textarea></div>`,
+  () => {
+    const name = document.getElementById('pf-name').value.trim();
+    if (!name) { toast('Name required'); return false; }
+    const data = { name, url:document.getElementById('pf-url').value.trim(), status:document.getElementById('pf-status').value, note:document.getElementById('pf-note').value.trim() };
+    if (!vd.professionals) vd.professionals = [];
+    if (profId) { Object.assign(vd.professionals.find(x=>x.id===profId), data); toast('Supplier updated'); }
+    else { vd.professionals.push({id:'p'+Date.now(),...data}); toast('Supplier added'); }
+    save(); renderVendors(); return true;
+  });
+}
+function deleteProf(vendorId, profId) {
+  const vd = state.vendors.find(x=>x.id===vendorId);
+  const p  = (vd.professionals||[]).find(x=>x.id===profId);
+  if (confirm('Remove "'+p.name+'"?')) { vd.professionals=vd.professionals.filter(x=>x.id!==profId); save(); renderVendors(); toast('Supplier removed'); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GUESTS TAB — existing guest system + Table Number field/sorting
+   ══════════════════════════════════════════════════════════════════ */
+let gFilter = 'all', gSort = 'default';
+const AGE = {old:'Older', middle:'Middle', young:'Young', kid:'Kid'};
+
+function tableSortValue(t) {
+  if (t===undefined || t===null || String(t).trim()==='') return null;
+  const n = parseInt(t,10);
+  return isNaN(n) ? null : n;
+}
+function sortGuestsByTable(list) {
+  return list.slice().sort((a,b) => {
+    const av = tableSortValue(a.tableNumber), bv = tableSortValue(b.tableNumber);
+    if (av===null && bv===null) return 0;
+    if (av===null) return 1;
+    if (bv===null) return -1;
+    return av-bv;
+  });
+}
+
+function renderGuests() {
+  const byCat={}, byAge={}, bySide={};
+  state.guests.forEach(g => { byCat[g.cat]=(byCat[g.cat]||0)+1; byAge[g.age]=(byAge[g.age]||0)+1; bySide[g.from]=(bySide[g.from]||0)+1; });
+  const cats = Object.keys(byCat);
+  const total = state.guests.length;
+  let list = (gFilter==='all') ? state.guests.slice() : state.guests.filter(g => g.cat===gFilter);
+  if (gSort==='table') list = sortGuestsByTable(list);
+  const targetNote = total<200 ? (200-total)+' to reach 200' : total>220 ? (total-220)+' over 220' : 'within target';
+
+  document.getElementById('guests').innerHTML = `
+    <h2 class="sec">Guest list</h2>
+    <p class="sec-sub">Your ${total} guests, targeting 200–220. Filter by group, sort by table, add, edit or remove anyone — saves automatically.</p>
+    <div class="stat-grid">
+      <div class="stat" style="--acc:var(--olive)"><div class="sl">Total guests</div><div class="sv">${total}</div><div class="ss">${targetNote}</div></div>
+      <div class="stat" style="--acc:var(--terra)"><div class="sl">Kids</div><div class="sv">${byAge.kid||0}</div><div class="ss">note for catering</div></div>
+      <div class="stat" style="--acc:var(--gold)"><div class="sl">Groups</div><div class="sv">${cats.length}</div></div>
+      <div class="stat" style="--acc:var(--sky)"><div class="sl">Largest group</div><div class="sv" style="font-size:17px">${esc((Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0]||['—'])[0])}</div><div class="ss">${(Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0]||['',0])[1]} people</div></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-box card pad"><div class="blk-title"><span class="ti ti-chart-pie"></span>By category</div><div style="height:200px;position:relative"><canvas id="chart-gcat"></canvas></div></div>
+      <div class="chart-box card pad"><div class="blk-title"><span class="ti ti-chart-pie-2"></span>By age group</div><div style="height:200px;position:relative"><canvas id="chart-gage"></canvas></div></div>
+      <div class="chart-box card pad"><div class="blk-title"><span class="ti ti-chart-bar"></span>By side</div><div style="height:200px;position:relative"><canvas id="chart-gside"></canvas></div></div>
+    </div>
+    <div class="editbar">
+      <div class="filters" id="gfilters">
+        <button class="${gFilter==='all'?'on':''}" onclick="setGF('all')">All ${total}</button>
+        ${cats.map(cat => `<button class="${gFilter===cat?'on':''}" onclick="setGF('${esc(cat).replace(/'/g,"&#39;")}')">${esc(cat)} <b>${byCat[cat]}</b></button>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select class="sel" onchange="setGSort(this.value)">
+          <option value="default"${gSort==='default'?' selected':''}>Default order</option>
+          <option value="table"${gSort==='table'?' selected':''}>Sort by table number</option>
+        </select>
+        <button class="btn btn-ghost" onclick="exportGuestsCSV()"><span class="ti ti-download"></span>CSV</button>
+        <button class="btn btn-primary" onclick="openGuestModal()"><span class="ti ti-plus"></span>Add guest</button>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="width:44px;text-align:center">#</th><th>Name</th><th>Category</th><th>Age</th><th>Invited by</th><th>Seated</th><th>Table #</th><th style="width:68px"></th></tr></thead>
+      <tbody>${list.length ? list.map((g,idx) => `<tr>
+        <td style="text-align:center;color:var(--ink-f);font-size:11px;font-variant-numeric:tabular-nums">${idx+1}</td>
+        <td><b>${esc(g.name)}</b></td>
+        <td style="color:var(--ink-s)">${esc(g.cat)}</td>
+        <td><span class="agebadge ${esc(g.age)}">${esc(AGE[g.age]||g.age)}</span></td>
+        <td style="color:var(--ink-s);font-size:12px">${esc(g.from)}</td>
+        <td>${g.table&&g.table!=='Όχι'?'<span class="ti ti-check" style="color:var(--olive)"></span>':'<span style="color:var(--ink-f)">—</span>'}</td>
+        <td><input class="tblnum-input" value="${esc(g.tableNumber||'')}" onchange="setGuestTable('${g.id}',this.value)" inputmode="numeric" placeholder="—"></td>
+        <td><div class="acts"><button class="icobtn" onclick="openGuestModal('${g.id}')" title="Edit"><span class="ti ti-pencil"></span></button><button class="icobtn del" onclick="delGuest('${g.id}')" title="Delete"><span class="ti ti-trash"></span></button></div></td>
+      </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--ink-f)">No guests in this group.</td></tr>`}
+      </tbody>
+    </table></div>`;
+  renderGuestCharts();
+}
+function setGF(f){ gFilter=f; renderGuests(); }
+function setGSort(s){ gSort=s; renderGuests(); }
+function setGuestTable(id,val){ const g=state.guests.find(x=>x.id===id); if(!g) return; g.tableNumber=val.trim(); save(); renderGuests(); }
+
+function renderGuestCharts() {
+  if (typeof Chart === 'undefined') return; // chart.js CDN unreachable — rest of the app still works
+  const byCat={}, byAge={}, bySide={};
+  state.guests.forEach(g => { byCat[g.cat]=(byCat[g.cat]||0)+1; byAge[g.age]=(byAge[g.age]||0)+1; bySide[g.from]=(bySide[g.from]||0)+1; });
+  const PAL = ['#748159','#c9998c','#a6875f','#8b9884','#b98a9e','#7a6b8a','#4d8a7a'];
+  const cc = document.getElementById('chart-gcat');
+  if (cc) { if (charts.gcat) charts.gcat.destroy(); const cK=Object.keys(byCat).sort((a,b)=>byCat[b]-byCat[a]); charts.gcat=new Chart(cc,{type:'doughnut',data:{labels:cK,datasets:[{data:cK.map(k=>byCat[k]),backgroundColor:PAL,borderWidth:2,borderColor:'#fffcf4'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{font:{family:'Outfit',size:11},boxWidth:12,padding:6}}}}}); }
+  const ca = document.getElementById('chart-gage');
+  if (ca) { if (charts.gage) charts.gage.destroy(); const aK=['young','middle','old','kid']; charts.gage=new Chart(ca,{type:'doughnut',data:{labels:aK.map(k=>AGE[k]||k),datasets:[{data:aK.map(k=>byAge[k]||0),backgroundColor:['#748159','#8b9884','#a6875f','#c9998c'],borderWidth:2,borderColor:'#fffcf4'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{font:{family:'Outfit',size:11},boxWidth:12,padding:6}}}}}); }
+  const cs = document.getElementById('chart-gside');
+  if (cs) { if (charts.gside) charts.gside.destroy(); const sK=Object.keys(bySide).sort((a,b)=>bySide[b]-bySide[a]); charts.gside=new Chart(cs,{type:'bar',data:{labels:sK,datasets:[{data:sK.map(k=>bySide[k]),backgroundColor:PAL,borderRadius:7,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{family:'Outfit',size:12}}}}}}); }
+}
+
+function openGuestModal(id) {
+  const cats  = [...new Set(state.guests.map(g => g.cat).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+  const sides = [...new Set(state.guests.map(g => g.from).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+  const g = id ? state.guests.find(x => x.id===id)
+               : {name:'', cat:cats[0]||'', age:'young', from:sides[0]||'', table:'Ναι', tableNumber:''};
+  const catList  = (g.cat  && !cats.includes(g.cat))   ? [...cats,  g.cat ] : cats;
+  const sideList = (g.from && !sides.includes(g.from)) ? [...sides, g.from] : sides;
+  const catOpts  = catList.map(c  => `<option value="${esc(c)}"${g.cat===c?' selected':''}>${esc(c)}</option>`).join('');
+  const sideOpts = sideList.map(s => `<option value="${esc(s)}"${g.from===s?' selected':''}>${esc(s)}</option>`).join('');
+  // When there are no existing categories/people yet (e.g. a brand-new guest list), the
+  // "add new" option is the only choice — show its text input right away instead of hiding
+  // it behind a select that already defaults to that option (which silently blocked saving).
+  const catNewVisible  = catList.length===0;
+  const sideNewVisible = sideList.length===0;
+
+  modal(id ? 'Edit guest' : 'Add guest', `
+    <div class="fld"><label>Name</label><input id="gn" value="${esc(g.name)}" placeholder="Full name"></div>
+    <div class="fld-row">
+      <div class="fld">
+        <label>Category</label>
+        <select id="gc" onchange="toggleNew('gc','gc-new')">${catOpts}<option value="__new__"${catNewVisible?' selected':''}>&#43; Add new category…</option></select>
+        <input id="gc-new" value="${catNewVisible?esc(g.cat||''):''}" placeholder="Type new category…" style="display:${catNewVisible?'block':'none'};margin-top:7px;width:100%;font-family:Outfit,sans-serif;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink)">
+      </div>
+      <div class="fld"><label>Age group</label><select id="ga">${['old','middle','young','kid'].map(a => `<option value="${a}"${g.age===a?' selected':''}>${AGE[a]}</option>`).join('')}</select></div>
+    </div>
+    <div class="fld-row">
+      <div class="fld">
+        <label>Invited by</label>
+        <select id="gf" onchange="toggleNew('gf','gf-new')">${sideOpts}<option value="__new__"${sideNewVisible?' selected':''}>&#43; Add new person…</option></select>
+        <input id="gf-new" value="${sideNewVisible?esc(g.from||''):''}" placeholder="Type name…" style="display:${sideNewVisible?'block':'none'};margin-top:7px;width:100%;font-family:Outfit,sans-serif;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink)">
+      </div>
+      <div class="fld"><label>Seated at table</label><select id="gt"><option value="Ναι"${g.table!=='Όχι'?' selected':''}>Yes</option><option value="Όχι"${g.table==='Όχι'?' selected':''}>No</option></select></div>
+    </div>
+    <div class="fld"><label>Table number</label><input id="gtn" value="${esc(g.tableNumber||'')}" placeholder="e.g. 5" inputmode="numeric"></div>`,
+  () => {
+    const name = document.getElementById('gn').value.trim();
+    if (!name) { toast('Name required'); return false; }
+    const catSel  = document.getElementById('gc').value;
+    const fromSel = document.getElementById('gf').value;
+    const cat  = catSel  === '__new__' ? document.getElementById('gc-new').value.trim()  : catSel;
+    const from = fromSel === '__new__' ? document.getElementById('gf-new').value.trim()  : fromSel;
+    if (!cat)  { toast('Category required'); return false; }
+    if (!from) { toast('Invited by required'); return false; }
+    const data = { name, cat, age:document.getElementById('ga').value, from, table:document.getElementById('gt').value, tableNumber:document.getElementById('gtn').value.trim() };
+    if (id) { Object.assign(state.guests.find(x => x.id===id), data); toast('Guest updated'); }
+    else    { state.guests.push({id:'g'+Date.now(), ...data}); toast('Guest added'); }
+    save(); renderGuests(); renderRoadmap(); return true;
+  });
+}
+function toggleNew(selId, inputId) {
+  const sel = document.getElementById(selId); const inp = document.getElementById(inputId);
+  if (!inp) return;
+  const show = sel.value === '__new__';
+  inp.style.display = show ? 'block' : 'none';
+  if (show) { inp.value = ''; inp.focus(); }
+}
+function delGuest(id){ const g=state.guests.find(x=>x.id===id); if(confirm('Remove '+g.name+'?')){ state.guests=state.guests.filter(x=>x.id!==id); save(); renderGuests(); renderRoadmap(); toast('Removed'); } }
+function exportGuestsCSV() {
+  const rows = [['#','Name','Category','Age','Invited by','Seated','Table Number'], ...state.guests.map((g,i)=>[i+1,g.name,g.cat,g.age,g.from,g.table,g.tableNumber||''])];
+  downloadCSV(rows, 'wedplan_guests.csv');
+}
+
+/* ===== SheetSync v1 – syncs this tool with a Google Sheet through the Apps Script backend =====
+   The tool keeps working exactly as before (its own state + localStorage). SheetSync only needs:
+     toRecords()        -> {collection: {id: plainObject}}   (current state, as records)
+     fromRecords(recs)  -> rebuild state from that shape, save it locally, re-render (do NOT call changed())
+     onStatus(s)        -> optional: show s.text in the tool's own style (s.state: local|pending|syncing|synced|error)
+   Call SheetSync.changed() after every local save. Settings UI calls connect()/disconnect()/syncNow().
+   ======================================================================================== */
+const SheetSync = (function () {
+  let K = 'sheetsync', S = null, H = null, timer = null, busy = false, again = false, applying = false;
+  const blank = () => ({ url: '', token: '', since: 0, known: {}, sheetUrl: '', at: 0, err: '' });
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(S)); } catch (e) {} };
+  const canon = v => Array.isArray(v) ? '[' + v.map(canon).join(',') + ']'
+    : (v && typeof v === 'object') ? '{' + Object.keys(v).sort().filter(k => v[k] !== undefined).map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}'
+    : JSON.stringify(v === undefined ? null : v);
+  const hash = v => { const s = canon(v); let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + '.' + s.length; };
+  const key = (c, id) => c + '\u0001' + id;
+  const on = () => !!(S.url && S.token);
+
+  function snapshot() {
+    const recs = H.toRecords() || {}, snap = {};
+    for (const c in recs) for (const id in recs[c]) snap[key(c, id)] = { c, id: String(id), data: recs[c][id], h: hash(recs[c][id]) };
+    return snap;
+  }
+  function pendingList(snap) {
+    const out = [], now = Math.floor(Date.now() / 1000);
+    for (const k in snap) { const kn = S.known[k]; if (!kn || kn.del || kn.h !== snap[k].h) out.push({ c: snap[k].c, id: snap[k].id, u: now, data: snap[k].data, _h: snap[k].h }); }
+    for (const k in S.known) if (!S.known[k].del && !snap[k]) { const [c, id] = k.split('\u0001'); out.push({ c, id, u: now, del: 1 }); }
+    return out;
+  }
+  function status(st) {
+    const n = S && on() && !busy ? pendingList(snapshot()).length : 0;
+    const s = !on() ? { state: 'local', text: 'local only' }
+      : st === 'syncing' || busy ? { state: 'syncing', text: 'syncing…' }
+      : S.err ? { state: 'error', text: (navigator.onLine ? 'sync error: ' : 'offline: ') + S.err }
+      : n ? { state: 'pending', text: n + ' change' + (n > 1 ? 's' : '') + ' to sync' }
+      : { state: 'synced', text: 'synced' };
+    if (H && H.onStatus) H.onStatus(s);
+    return s;
+  }
+  async function call(body) {
+    const r = await fetch(S.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ token: S.token }, body)) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    let j; try { j = await r.json(); } catch (e) { throw new Error('the link did not answer like the sync script (check the link and that access = Anyone)'); }
+    if (j.error) throw new Error(j.error);
+    return j;
+  }
+  /* one request: send what changed here, receive what changed elsewhere */
+  async function syncNow(opts) {
+    opts = opts || {};
+    if (!on()) return status();
+    if (busy) { again = true; return; }
+    busy = true; again = false; clearTimeout(timer); status('syncing');
+    try {
+      const snap = snapshot();
+      const changes = opts.replace ? [] : pendingList(snap);
+      const j = await call({ action: 'sync', since: opts.replace ? 0 : S.since, changes: changes.map(x => { const y = Object.assign({}, x); delete y._h; return y; }) });
+      if (opts.replace) S.known = {};
+      for (const x of changes) S.known[key(x.c, x.id)] = x.del ? { del: 1, u: x.u } : { h: x._h, u: x.u };
+      const rows = j.rows || [];
+      if (rows.length || opts.replace) {
+        const now = snapshot(), recs = opts.replace ? {} : (H.toRecords() || {});
+        let touched = !!opts.replace;
+        for (const r of rows) {
+          const k = key(r.c, r.id);
+          if (!opts.replace && (now[k] && now[k].h) !== (snap[k] && snap[k].h)) continue;  // edited here during the request: keep ours
+          if (r.del) { if (recs[r.c] && r.id in recs[r.c]) { delete recs[r.c][r.id]; touched = true; } S.known[k] = { del: 1, u: r.u }; continue; }
+          const h = hash(r.data);
+          if (!(now[k] && now[k].h === h) || opts.replace) { (recs[r.c] = recs[r.c] || {})[r.id] = r.data; touched = true; }
+          S.known[k] = { h, u: r.u };
+        }
+        if (touched) { applying = true; try { H.fromRecords(recs); } finally { applying = false; } }
+      }
+      S.since = j.t; S.sheetUrl = j.url || S.sheetUrl; S.at = Date.now(); S.err = '';
+      save(); busy = false; status();
+      if (again || pendingList(snapshot()).length) schedule(1500);
+      return true;
+    } catch (e) {
+      busy = false; S.err = e.message; save(); status();
+      if (opts.manual) throw e;
+      return false;
+    }
+  }
+  function schedule(ms) { if (!on()) return status(); clearTimeout(timer); timer = setTimeout(() => syncNow(), ms == null ? 3000 : ms); status(); }
+
+  return {
+    init(id, hooks) {
+      K = 'sheetsync_' + id; H = hooks;
+      try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(K) || '{}')); } catch (e) { S = blank(); }
+      document.addEventListener('visibilitychange', () => {
+        if (!on()) return;
+        if (document.visibilityState === 'hidden' && pendingList(snapshot()).length) syncNow();
+        if (document.visibilityState === 'visible' && Date.now() - (S.at || 0) > 30000) syncNow();
+      });
+      window.addEventListener('online', () => { if (on()) syncNow(); });
+      if (on()) syncNow(); else status();
+    },
+    changed() { if (!applying) schedule(); },
+    syncNow() { return syncNow({ manual: true }); },
+    /* first connect on a device: mode 'sheet' = take the Sheet's data (replaces this device's copy),
+       'merge' = send this device's data up and add what the Sheet has. Returns the Sheet's record count. */
+    async ping(url, token) { const s0 = S; S = Object.assign(blank(), { url, token }); try { return await call({ action: 'ping' }); } finally { S = s0; } },
+    async connect(url, token, mode) {
+      const changed = url !== S.url;
+      S.url = url; S.token = token; S.err = '';
+      if (changed || !S.since) { S.since = 0; S.known = {}; }
+      save();
+      return syncNow({ manual: true, replace: mode === 'sheet' });
+    },
+    disconnect() { clearTimeout(timer); S.url = ''; save(); status(); },
+    info() { return { url: S.url, token: S.token, sheetUrl: S.sheetUrl, lastSync: S.at, error: S.err, connected: on(), status: status() }; }
+  };
+})();
+
+/* ── INIT ───────────────────────────────────────────────────────────── */
+SheetSync.init('wedplan', { toRecords: wedToRecords, fromRecords: wedFromRecords, onStatus: onSyncStatus });
+renderAll();
+
+</script>
+</body>
+</html>
