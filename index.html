@@ -797,7 +797,7 @@ function rmCardHtml(vendor) {
       </div>` : ''}
   `;
 
-  const itemsHtml = vendor.items.map((item) => {
+  const itemsHtml = vendor.items.slice().sort((a,b) => (a.due?1:0)-(b.due?1:0) || (a.due&&b.due ? a.due.localeCompare(b.due) : 0)).map((item) => {   // display order: no date first, then past → future (stored order unchanged)
     const key = vendor.id+'__'+item.id;
     return (rmEditing===key) ? rmEditItemHtml(vendor,item,key) : rmItemHtml(vendor,item,key);
   }).join('');
