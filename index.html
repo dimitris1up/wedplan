@@ -701,7 +701,7 @@ document.getElementById('tabs').addEventListener('click', e => {
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b===btn));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('show', p.id===tab));
   if (tab==='roadmap') setTimeout(() => { renderRoadmapCharts(); buildRoadmapTimeline(); }, 80);
-  if (tab==='guests')  setTimeout(renderGuestCharts, 80);
+  if (tab==='guests')  setTimeout(renderGuests, 80);   // redraw so Table # reflects Seating changes
   if (tab==='seating') setTimeout(renderSeating, 60);
   window.scrollTo({top:0, behavior:'smooth'});
 });
@@ -1374,17 +1374,20 @@ function renderGuests() {
       </div>
     </div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th style="width:44px;text-align:center">#</th><th>Name</th><th>Category</th><th>Age</th><th>Invited by</th><th>Seated</th><th>Table #</th><th style="width:68px"></th></tr></thead>
+      <thead><tr><th style="width:44px;text-align:center">#</th><th>Name</th><th>Category</th><th>Age</th><th>Invited by</th><th title="Invitation sent"><span class="ti ti-mail"></span></th><th title="Contacted"><span class="ti ti-phone"></span></th><th>Answer</th><th>Seated</th><th>Table #</th><th style="width:68px"></th></tr></thead>
       <tbody>${list.length ? list.map((g,idx) => `<tr>
         <td style="text-align:center;color:var(--ink-f);font-size:11px;font-variant-numeric:tabular-nums">${idx+1}</td>
         <td><b>${esc(g.name)}</b></td>
         <td style="color:var(--ink-s)">${esc(g.cat)}</td>
         <td><span class="agebadge ${esc(g.age)}">${esc(AGE[g.age]||g.age)}</span></td>
         <td style="color:var(--ink-s);font-size:12px">${esc(g.from)}</td>
+        <td>${g.invSent?'<span class="ti ti-check" style="color:var(--olive)"></span>':'<span style="color:var(--ink-f)">—</span>'}</td>
+        <td>${g.contacted?'<span class="ti ti-check" style="color:var(--olive)"></span>':'<span style="color:var(--ink-f)">—</span>'}</td>
+        <td>${g.answer?`<span class="pill ${({yes:'done',no:'dead',maybe:'prog'})[g.answer]||'todo'}">${({yes:'Yes',no:'No',maybe:'Maybe'})[g.answer]||esc(g.answer)}</span>`:'<span style="color:var(--ink-f)">—</span>'}</td>
         <td>${g.table&&g.table!=='Όχι'?'<span class="ti ti-check" style="color:var(--olive)"></span>':'<span style="color:var(--ink-f)">—</span>'}</td>
         <td><span class="tbl-ro${g.tableNumber?'':' none'}" title="Set in the Seating tab">${esc(g.tableNumber||'—')}</span></td>
         <td><div class="acts"><button class="icobtn" onclick="openGuestModal('${g.id}')" title="Edit"><span class="ti ti-pencil"></span></button><button class="icobtn del" onclick="delGuest('${g.id}')" title="Delete"><span class="ti ti-trash"></span></button></div></td>
-      </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--ink-f)">No guests in this group.</td></tr>`}
+      </tr>`).join('') : `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--ink-f)">No guests in this group.</td></tr>`}
       </tbody>
     </table></div>`;
   renderGuestCharts();
@@ -1439,7 +1442,14 @@ function openGuestModal(id) {
       </div>
       <div class="fld"><label>Seated at table</label><select id="gt"><option value="Ναι"${g.table!=='Όχι'?' selected':''}>Yes</option><option value="Όχι"${g.table==='Όχι'?' selected':''}>No</option></select></div>
     </div>
-    <div class="fld"><label>Table number</label><input id="gtn" value="${esc(g.tableNumber||'')}" placeholder="e.g. 5" inputmode="numeric"></div>`,
+    <div class="fld-row">
+      <div class="fld check-fld">
+        <label style="margin-bottom:9px"><input type="checkbox" id="ginv"${g.invSent?' checked':''}><span class="ti ti-mail" style="color:var(--gold)"></span>Invitation sent</label>
+        <label><input type="checkbox" id="gcon"${g.contacted?' checked':''}><span class="ti ti-phone" style="color:var(--gold)"></span>Contacted</label>
+      </div>
+      <div class="fld"><label>Answer</label><select id="gans">${[['','—'],['yes','Yes'],['no','No'],['maybe','Maybe']].map(([v,l]) => `<option value="${v}"${(g.answer||'')===v?' selected':''}>${l}</option>`).join('')}</select></div>
+    </div>
+    `,
   () => {
     const name = document.getElementById('gn').value.trim();
     if (!name) { toast('Name required'); return false; }
@@ -1449,7 +1459,7 @@ function openGuestModal(id) {
     const from = fromSel === '__new__' ? document.getElementById('gf-new').value.trim()  : fromSel;
     if (!cat)  { toast('Category required'); return false; }
     if (!from) { toast('Invited by required'); return false; }
-    const data = { name, cat, age:document.getElementById('ga').value, from, table:document.getElementById('gt').value, tableNumber:document.getElementById('gtn').value.trim() };
+    const data = { name, cat, age:document.getElementById('ga').value, from, table:document.getElementById('gt').value, invSent:document.getElementById('ginv').checked, contacted:document.getElementById('gcon').checked, answer:document.getElementById('gans').value };
     if (id) { Object.assign(state.guests.find(x => x.id===id), data); toast('Guest updated'); }
     else    { state.guests.push({id:'g'+Date.now(), ...data}); toast('Guest added'); }
     save(); renderGuests(); renderRoadmap(); return true;
